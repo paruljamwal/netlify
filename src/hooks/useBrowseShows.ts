@@ -20,7 +20,6 @@ export function useBrowseShows(options: UseBrowseShowsOptions = {}) {
   )
 }
 
-// same as browseShows, using page 0 for the home trending row
 export function useTrendingShows(page = 0) {
   return useBrowseShows({ page })
 }

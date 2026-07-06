@@ -4,7 +4,7 @@ import { useApi } from './useApi'
 
 interface UseShowSearchOptions {
   query: string
-  minLength?: number // wait until user types enough chars
+  minLength?: number
 }
 
 export function useShowSearch({ query, minLength = 2 }: UseShowSearchOptions) {

@@ -11,5 +11,5 @@ export interface AsyncState<T> {
   loading: boolean
   error: ApiError | null
   fromCache: boolean
-  isStale: boolean // expired cache, used when offline
+  isStale: boolean
 }

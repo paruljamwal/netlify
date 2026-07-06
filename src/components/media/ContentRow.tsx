@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import type { MediaItem } from '@/types/media'
 import { ShowCard, type ShowCardVariant } from './ShowCard'
 import { ShowCardSkeleton } from './ShowCardSkeleton'
@@ -11,7 +12,7 @@ interface ContentRowProps {
   onShowClick?: (show: MediaItem) => void
 }
 
-export function ContentRow({
+function ContentRowComponent({
   title,
   shows,
   variant = 'landscape',
@@ -42,3 +43,5 @@ export function ContentRow({
     </section>
   )
 }
+
+export const ContentRow = memo(ContentRowComponent)

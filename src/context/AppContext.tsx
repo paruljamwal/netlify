@@ -1,8 +1,6 @@
 import { createContext, useContext, type ReactNode } from 'react'
 
-type AppContextValue = {
-  // add global state here later (watchlist, profile, etc.)
-}
+type AppContextValue = Record<string, never>
 
 const AppContext = createContext<AppContextValue | null>(null)
 

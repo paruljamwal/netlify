@@ -1,6 +1,5 @@
 export type MediaType = 'tv' | 'movie'
 
-// shape used across the app (mapped from api response)
 export interface MediaItem {
   id: string
   title: string

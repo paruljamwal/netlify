@@ -5,8 +5,8 @@ export const CACHE_KEYS = {
 } as const
 
 export const CACHE_TTL = {
-  LIST: 5 * 60 * 1000, // 5 min
-  DETAIL: 30 * 60 * 1000, // 30 min
+  LIST: 5 * 60 * 1000,
+  DETAIL: 30 * 60 * 1000,
   SEARCH: 10 * 60 * 1000,
   DEFAULT: 15 * 60 * 1000,
 } as const

@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import type { MediaItem } from '@/types/media'
 
 export type ShowCardVariant = 'landscape' | 'portrait'
@@ -16,7 +17,7 @@ const PLACEHOLDER =
 
 const variantWidth: Record<ShowCardVariant, string> = {
   landscape: 'w-[clamp(200px,18vw,280px)]',
-  portrait: 'w-[clamp(120px,10vw,160px)]',
+  portrait: 'w-[clamp(120px,10vw,160px)] lg:w-full',
 }
 
 const variantAspect: Record<ShowCardVariant, string> = {
@@ -24,7 +25,11 @@ const variantAspect: Record<ShowCardVariant, string> = {
   portrait: 'aspect-[2/3]',
 }
 
-export function ShowCard({ show, variant = 'landscape', onClick }: ShowCardProps) {
+function ShowCardComponent({
+  show,
+  variant = 'landscape',
+  onClick,
+}: ShowCardProps) {
   return (
     <article
       className={`group shrink-0 cursor-pointer rounded transition-all duration-300 ease-out hover:z-10 hover:scale-[1.08] hover:shadow-[0_8px_24px_rgba(0,0,0,0.45)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-white ${variantWidth[variant]}`}
@@ -38,7 +43,9 @@ export function ShowCard({ show, variant = 'landscape', onClick }: ShowCardProps
         }
       }}
     >
-      <div className={`relative overflow-hidden rounded bg-[#181818] ${variantAspect[variant]}`}>
+      <div
+        className={`relative overflow-hidden rounded bg-[#181818] ${variantAspect[variant]}`}
+      >
         <img
           src={show.imageUrl ?? PLACEHOLDER}
           alt={show.title}
@@ -61,3 +68,11 @@ export function ShowCard({ show, variant = 'landscape', onClick }: ShowCardProps
     </article>
   )
 }
+
+export const ShowCard = memo(ShowCardComponent, (prev, next) => {
+  return (
+    prev.show.id === next.show.id &&
+    prev.variant === next.variant &&
+    prev.onClick === next.onClick
+  )
+})

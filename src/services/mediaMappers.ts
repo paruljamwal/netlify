@@ -3,7 +3,6 @@ import type { TvMazeSearchResult, TvMazeShow } from '@/types/tvmaze'
 
 function stripHtml(html: string | null): string | null {
   if (!html) return null
-  // tvmaze summaries come with html tags
   return html.replace(/<[^>]*>/g, '').trim()
 }
 

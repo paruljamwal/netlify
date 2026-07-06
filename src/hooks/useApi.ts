@@ -3,7 +3,7 @@ import type { AsyncState } from '@/types/api'
 import { toApiError } from '@/services/apiError'
 
 interface UseApiOptions {
-  enabled?: boolean // set false to skip fetch (e.g. empty search)
+  enabled?: boolean
 }
 
 export interface FetchResult<T> {
@@ -20,7 +20,6 @@ const initialState = <T>(): AsyncState<T> => ({
   isStale: false,
 })
 
-// handles loading/error state for any service call
 export function useApi<T>(
   fetcher: () => Promise<FetchResult<T>>,
   deps: unknown[],

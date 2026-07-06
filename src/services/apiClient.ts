@@ -20,6 +20,10 @@ async function fetchWithTimeout(
   const controller = new AbortController()
   const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT_MS)
 
+  const externalSignal = init?.signal
+  const onExternalAbort = () => controller.abort()
+  externalSignal?.addEventListener('abort', onExternalAbort)
+
   try {
     return await fetch(url, {
       ...init,
@@ -31,10 +35,10 @@ async function fetchWithTimeout(
     })
   } finally {
     clearTimeout(timeoutId)
+    externalSignal?.removeEventListener('abort', onExternalAbort)
   }
 }
 
-// fetch wrapper with caching + timeout. use via mediaService, not in components.
 export async function apiClient<T>(
   endpoint: string,
   init?: RequestInit,
@@ -72,7 +76,6 @@ export async function apiClient<T>(
       meta: { fromCache: false, isStale: false },
     }
   } catch (error) {
-    // network failed - try stale cache
     const stale = getFromCache<T>(cacheKey, { allowStale: true })
 
     if (stale !== null) {

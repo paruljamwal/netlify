@@ -7,6 +7,7 @@ import { mapSearchResults, mapShowToMediaItem } from './mediaMappers'
 export interface BrowseShowsOptions {
   page?: number
   forceRefresh?: boolean
+  signal?: AbortSignal
 }
 
 export interface SearchShowsOptions {
@@ -20,11 +21,10 @@ export interface ShowDetailOptions {
 }
 
 export const mediaService = {
-  // no trending endpoint on tvmaze, page 0 works fine for home row
-  async browseShows({ page = 0, forceRefresh = false }: BrowseShowsOptions = {}) {
+  async browseShows({ page = 0, forceRefresh = false, signal }: BrowseShowsOptions = {}) {
     const { data, meta } = await apiClient<TvMazeShow[]>(
       ENDPOINTS.SHOWS(page),
-      undefined,
+      { signal },
       {
         cacheKey: CACHE_KEYS.SHOWS_PAGE(page),
         cacheTtlMs: CACHE_TTL.LIST,
