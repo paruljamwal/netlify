@@ -1,101 +1,43 @@
-import { memo, useMemo, useRef } from 'react'
-import { useVirtualizer } from '@tanstack/react-virtual'
-import {
-  GRID_COLUMNS,
-  GRID_OVERSCAN,
-  GRID_ROW_HEIGHT,
-} from '@/constants/browse'
 import type { MediaItem } from '@/types/media'
 import { ShowCard } from './ShowCard'
 
-interface VirtualizedShowGridProps {
+interface ShowGridProps {
   shows: MediaItem[]
   onShowClick?: (show: MediaItem) => void
   isInWatchlist?: (id: string) => boolean
   onToggleWatchlist?: (show: MediaItem) => void
+  loading?: boolean
 }
-
-const GridRow = memo(function GridRow({
-  rowShows,
-  onShowClick,
-  isInWatchlist,
-  onToggleWatchlist,
-}: {
-  rowShows: MediaItem[]
-  onShowClick?: (show: MediaItem) => void
-  isInWatchlist?: (id: string) => boolean
-  onToggleWatchlist?: (show: MediaItem) => void
-}) {
-  return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-      {rowShows.map((show) => (
-        <ShowCard
-          key={show.id}
-          show={show}
-          variant="portrait"
-          onClick={onShowClick}
-          inWatchlist={isInWatchlist?.(show.id)}
-          onToggleWatchlist={onToggleWatchlist}
-        />
-      ))}
-    </div>
-  )
-})
 
 export function VirtualizedShowGrid({
   shows,
   onShowClick,
   isInWatchlist,
   onToggleWatchlist,
-}: VirtualizedShowGridProps) {
-  const parentRef = useRef<HTMLDivElement>(null)
-
-  const rowCount = useMemo(
-    () => Math.ceil(shows.length / GRID_COLUMNS),
-    [shows.length],
-  )
-
-  const virtualizer = useVirtualizer({
-    count: rowCount,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => GRID_ROW_HEIGHT,
-    overscan: GRID_OVERSCAN,
-  })
-
-  const virtualRows = virtualizer.getVirtualItems()
-
+  loading = false,
+}: ShowGridProps) {
   return (
-    <div
-      ref={parentRef}
-      className="h-[calc(100vh-8rem)] overflow-y-auto px-[clamp(1rem,4vw,3.75rem)]"
-    >
-      <div
-        className="relative w-full"
-        style={{ height: `${virtualizer.getTotalSize()}px` }}
-      >
-        {virtualRows.map((virtualRow) => {
-          const start = virtualRow.index * GRID_COLUMNS
-          const rowShows = shows.slice(start, start + GRID_COLUMNS)
-
-          return (
-            <div
-              key={virtualRow.key}
-              className="absolute left-0 w-full pb-3"
-              style={{
-                height: `${virtualRow.size}px`,
-                transform: `translateY(${virtualRow.start}px)`,
-              }}
-            >
-              <GridRow
-                rowShows={rowShows}
-                onShowClick={onShowClick}
-                isInWatchlist={isInWatchlist}
-                onToggleWatchlist={onToggleWatchlist}
-              />
-            </div>
-          )
-        })}
+    <div className="mx-auto w-full max-w-content px-page-x pb-20">
+      <div className="grid grid-cols-2 gap-x-2 gap-y-5 sm:grid-cols-3 md:grid-cols-4 md:gap-x-2.5 lg:grid-cols-5 xl:grid-cols-6">
+        {shows.map((show) => (
+          <ShowCard
+            key={show.id}
+            show={show}
+            variant="portrait"
+            layout="grid"
+            onClick={onShowClick}
+            inWatchlist={isInWatchlist?.(show.id)}
+            onToggleWatchlist={onToggleWatchlist}
+          />
+        ))}
       </div>
+
+      {loading && (
+        <div className="flex items-center justify-center gap-2 py-10 text-sm text-muted">
+          <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-muted border-t-white" />
+          Loading shows…
+        </div>
+      )}
     </div>
   )
 }

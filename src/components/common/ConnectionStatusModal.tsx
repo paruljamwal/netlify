@@ -7,23 +7,26 @@ export function ConnectionStatusModal() {
 
   return (
     <div
-      className="fixed bottom-6 left-1/2 z-[200] -translate-x-1/2 animate-toast-in"
+      className="fixed bottom-6 left-1/2 z-[200] w-[min(90vw,24rem)] -translate-x-1/2 animate-toast-in"
       role="status"
       aria-live="polite"
     >
       <div
-        className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium shadow-lg backdrop-blur-sm ${
+        className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium shadow-xl backdrop-blur-md ${
           toast.online
-            ? 'bg-emerald-600/95 text-white'
-            : 'bg-[#2f2f2f]/95 text-white ring-1 ring-[#404040]'
+            ? 'bg-emerald-700/95 text-white'
+            : 'bg-surface-elevated/95 text-white ring-1 ring-surface-border'
         }`}
       >
-        <span aria-hidden="true">{toast.online ? '●' : '○'}</span>
-        <span>{toast.message}</span>
+        <span
+          className={`flex h-2 w-2 shrink-0 rounded-full ${toast.online ? 'bg-white' : 'bg-brand'}`}
+          aria-hidden="true"
+        />
+        <span className="flex-1">{toast.message}</span>
         <button
           type="button"
           onClick={dismissToast}
-          className="ml-1 opacity-70 transition hover:opacity-100"
+          className="shrink-0 rounded p-1 opacity-70 transition hover:opacity-100"
           aria-label="Dismiss"
         >
           ✕

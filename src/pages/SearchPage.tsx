@@ -1,12 +1,18 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Navbar } from '@/components/layout/Navbar'
+import { PageLayout } from '@/components/layout/PageLayout'
 import { SearchBar } from '@/components/search/SearchBar'
 import { SearchEmptyState } from '@/components/search/SearchEmptyState'
 import { SearchResults } from '@/components/search/SearchResults'
 import { useMediaSearch } from '@/hooks/useMediaSearch'
 import { useShowActions } from '@/hooks/useShowActions'
 import type { MediaItem } from '@/types/media'
+
+const hints = [
+  { label: 'By name', example: 'Breaking Bad' },
+  { label: 'By ID', example: '169' },
+  { label: 'By year', example: '2011' },
+]
 
 export function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -31,7 +37,7 @@ export function SearchPage() {
     if (!trimmed && current) {
       setSearchParams({}, { replace: true })
     }
-  }, [debouncedQuery, searchParams, setSearchParams]) // sync ?q= in url
+  }, [debouncedQuery, searchParams, setSearchParams])
 
   const handleSubmit = useCallback(
     (value: string) => {
@@ -44,8 +50,8 @@ export function SearchPage() {
 
   const handleSelectSuggestion = useCallback(
     (item: MediaItem) => {
-      setQuery(item.title)
-      setSearchParams({ q: item.title }, { replace: true })
+      setQuery(item.id)
+      setSearchParams({ q: item.id }, { replace: true })
     },
     [setSearchParams],
   )
@@ -53,10 +59,17 @@ export function SearchPage() {
   const showResults = loading || results.length > 0
 
   return (
-    <div className="min-h-screen bg-[#141414] font-sans text-white antialiased">
-      <Navbar />
-      <main className="px-[clamp(1rem,4vw,3.75rem)] pt-24 pb-12">
-        <h1 className="mb-6 text-2xl font-bold">Search</h1>
+    <PageLayout navbar="solid">
+      <main className="mx-auto max-w-content px-page-x pt-24 pb-12">
+        <header className="mb-8 max-w-2xl">
+          <p className="text-xs font-semibold uppercase tracking-widest text-brand">
+            Find something to watch
+          </p>
+          <h1 className="mt-2 text-3xl font-bold">Search</h1>
+          <p className="mt-2 text-sm text-muted">
+            Look up shows by title, TVMaze ID, or premiere year.
+          </p>
+        </header>
 
         <SearchBar
           value={query}
@@ -66,23 +79,35 @@ export function SearchPage() {
           autoFocus
         />
 
-        <p className="mt-3 text-xs text-[#808080]">
-          Name · numeric ID · 4-digit year (e.g. 2011)
-        </p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {hints.map(({ label, example }) => (
+            <button
+              key={label}
+              type="button"
+              onClick={() => {
+                setQuery(example)
+                setSearchParams({ q: example }, { replace: true })
+              }}
+              className="rounded-full bg-surface-elevated px-3 py-1.5 text-xs text-muted ring-1 ring-surface-border transition hover:bg-surface-border hover:text-white"
+            >
+              {label}: <span className="text-white">{example}</span>
+            </button>
+          ))}
+        </div>
 
         {error && (
-          <div className="mt-6 rounded bg-[#e50914]/10 px-4 py-3 text-sm text-[#e50914]">
+          <div className="mt-6 rounded-md border border-brand/30 bg-brand/10 px-4 py-3 text-sm text-white">
             {error.userMessage}
           </div>
         )}
 
         {isStale && (
-          <p className="mt-4 text-center text-sm text-[#b3b3b3]">
-            Offline mode — showing saved results
+          <p className="mt-4 rounded-md bg-surface-elevated px-4 py-2 text-center text-sm text-muted">
+            Offline — showing saved results
           </p>
         )}
 
-        <div className="mt-8">
+        <div className="mt-10">
           {showResults ? (
             <SearchResults
               results={results}
@@ -102,6 +127,6 @@ export function SearchPage() {
           )}
         </div>
       </main>
-    </div>
+    </PageLayout>
   )
 }

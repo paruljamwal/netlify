@@ -1,16 +1,13 @@
 import { Skeleton } from '@/components/common/Skeleton'
 import type { MediaItem } from '@/types/media'
+import { BACKDROP_PLACEHOLDER } from '@/utils/placeholders'
 
 interface HeroBannerProps {
   show: MediaItem | null
   loading?: boolean
+  onPlay?: (show: MediaItem) => void
+  onMoreInfo?: (show: MediaItem) => void
 }
-
-const PLACEHOLDER =
-  'data:image/svg+xml,' +
-  encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080"><rect fill="#181818" width="1920" height="1080"/></svg>',
-  )
 
 function truncate(text: string | null, maxLength: number): string {
   if (!text) return ''
@@ -19,22 +16,23 @@ function truncate(text: string | null, maxLength: number): string {
 }
 
 const heroShell =
-  'relative h-[clamp(420px,75vh,680px)] min-h-[420px] overflow-hidden -mb-8'
+  'relative h-[clamp(440px,78vh,720px)] min-h-[440px] overflow-hidden -mb-16'
 
 const heroContent =
-  'relative z-10 mx-auto flex h-full max-w-[1920px] flex-col justify-end px-[clamp(1rem,4vw,3.75rem)] pb-12 pt-24'
+  'relative z-10 mx-auto flex h-full max-w-content flex-col justify-end px-page-x pb-16 pt-28'
 
-export function HeroBanner({ show, loading = false }: HeroBannerProps) {
+export function HeroBanner({
+  show,
+  loading = false,
+  onPlay,
+  onMoreInfo,
+}: HeroBannerProps) {
   if (loading || !show) {
     return <HeroSkeleton />
   }
 
-  const meta = [show.genres.slice(0, 3).join(' · '), show.premiered?.slice(0, 4)]
-    .filter(Boolean)
-    .join(' · ')
-
   const backdropUrl =
-    show.imageUrl?.replace('/medium/', '/original/') ?? PLACEHOLDER
+    show.imageUrl?.replace('/medium/', '/original/') ?? BACKDROP_PLACEHOLDER
 
   return (
     <section className={heroShell} aria-label="Today's Top Show">
@@ -45,36 +43,53 @@ export function HeroBanner({ show, loading = false }: HeroBannerProps) {
         aria-hidden="true"
       />
       <div
-        className="absolute inset-0 bg-gradient-to-r from-[#141414]/95 from-0% via-[#141414]/60 via-35% to-transparent to-55%"
+        className="absolute inset-0 bg-gradient-to-r from-surface-base from-0% via-surface-base/55 via-40% to-transparent to-70%"
         aria-hidden="true"
       />
       <div
-        className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#141414] to-transparent"
+        className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-surface-base to-transparent"
         aria-hidden="true"
       />
+
       <div className={heroContent}>
-        <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-[#e50914]">
-          Today&apos;s Top Show
-        </p>
-        <h1 className="mb-2 max-w-[12ch] text-[clamp(2rem,5vw,3.5rem)] font-bold leading-tight drop-shadow-lg">
+        <div className="mb-3 flex flex-wrap items-center gap-2">
+          <span className="rounded bg-brand/90 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-white">
+            #1 Today
+          </span>
+          {show.rating != null && (
+            <span className="rounded bg-white/15 px-2 py-0.5 text-xs font-medium text-white backdrop-blur-sm">
+              {show.rating.toFixed(1)} ★
+            </span>
+          )}
+          {show.premiered && (
+            <span className="text-xs text-muted">{show.premiered.slice(0, 4)}</span>
+          )}
+        </div>
+
+        <h1 className="mb-3 max-w-[14ch] text-[clamp(2.25rem,5.5vw,4rem)] font-bold leading-[1.05] drop-shadow-lg">
           {show.title}
         </h1>
-        {meta && <p className="mb-4 text-sm text-[#b3b3b3]">{meta}</p>}
-        <p className="mb-6 line-clamp-3 max-w-xl text-base leading-relaxed drop-shadow max-md:hidden">
-          {truncate(show.summary, 220)}
+
+        {show.genres.length > 0 && (
+          <p className="mb-4 text-sm text-muted">
+            {show.genres.slice(0, 4).join(' · ')}
+          </p>
+        )}
+
+        <p className="mb-7 line-clamp-3 max-w-xl text-base leading-relaxed text-white/90 drop-shadow max-md:hidden">
+          {truncate(show.summary, 240)}
         </p>
-        <div className="flex flex-wrap gap-4">
-          <button
-            type="button"
-            className="rounded bg-white px-7 py-2.5 text-base font-semibold text-[#141414] transition hover:scale-105 hover:bg-white/85"
-          >
-            ▶ Play
+
+        <div className="flex flex-wrap gap-3">
+          <button type="button" className="btn-primary" onClick={() => onPlay?.(show)}>
+            <span aria-hidden="true">▶</span> Play
           </button>
           <button
             type="button"
-            className="rounded bg-[#6d6d6e]/70 px-7 py-2.5 text-base font-semibold text-white transition hover:scale-105 hover:bg-[#6d6d6e]/50"
+            className="btn-secondary"
+            onClick={() => onMoreInfo?.(show)}
           >
-            ℹ More Info
+            <span aria-hidden="true">ℹ</span> More Info
           </button>
         </div>
       </div>
@@ -91,17 +106,17 @@ function HeroSkeleton() {
     >
       <Skeleton className="absolute inset-0 rounded-none" />
       <div
-        className="absolute inset-0 bg-gradient-to-r from-[#141414]/95 via-[#141414]/60 to-transparent"
+        className="absolute inset-0 bg-gradient-to-r from-surface-base/95 via-surface-base/60 to-transparent"
         aria-hidden="true"
       />
       <div className={heroContent}>
-        <Skeleton className="mb-2 h-3.5 w-[140px]" />
-        <Skeleton className="mb-2 h-12 w-[min(480px,70%)]" />
-        <Skeleton className="mb-4 h-3.5 w-[200px]" />
-        <Skeleton className="mb-6 h-[60px] w-[min(520px,85%)] max-md:hidden" />
-        <div className="flex flex-wrap gap-4">
-          <Skeleton className="h-11 w-[120px]" />
-          <Skeleton className="h-11 w-[140px]" />
+        <Skeleton className="mb-3 h-5 w-28" />
+        <Skeleton className="mb-3 h-14 w-[min(520px,75%)]" />
+        <Skeleton className="mb-4 h-4 w-48" />
+        <Skeleton className="mb-7 h-[72px] w-[min(540px,90%)] max-md:hidden" />
+        <div className="flex flex-wrap gap-3">
+          <Skeleton className="h-11 w-[130px]" />
+          <Skeleton className="h-11 w-[150px]" />
         </div>
       </div>
     </section>

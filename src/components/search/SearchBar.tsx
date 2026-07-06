@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { MIN_NAME_SEARCH_LENGTH } from '@/constants/search'
 import { useSearchSuggestions } from '@/hooks/useSearchSuggestions'
 import type { MediaItem } from '@/types/media'
 import { detectSearchMode } from '@/utils/search'
@@ -25,7 +26,7 @@ export function SearchBar({
   const showSuggestions =
     open &&
     detectSearchMode(value) === 'name' &&
-    value.trim().length >= 2 &&
+    value.trim().length >= MIN_NAME_SEARCH_LENGTH &&
     (suggestions.length > 0 || loadingSuggestions)
 
   useEffect(() => {
@@ -36,7 +37,7 @@ export function SearchBar({
     }
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, []) // close dropdown on blur
+  }, [])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -62,50 +63,63 @@ export function SearchBar({
           }}
           onFocus={() => setOpen(true)}
           autoFocus={autoFocus}
-          placeholder="Search by name, ID, or year…"
-          className="w-full rounded bg-[#2f2f2f]/90 py-3 pl-11 pr-4 text-white placeholder-[#808080] outline-none ring-[#e50914] transition focus:ring-2"
+          placeholder="Titles, people, genres"
+          className="w-full rounded-md bg-surface-elevated py-3.5 pl-12 pr-12 text-white placeholder-subtle outline-none ring-1 ring-surface-border transition focus:ring-2 focus:ring-brand"
           aria-label="Search shows"
           aria-autocomplete="list"
           aria-expanded={showSuggestions}
           role="combobox"
         />
         <span
-          className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-lg text-[#b3b3b3]"
+          className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-xl text-muted"
           aria-hidden="true"
         >
           ⌕
         </span>
+        {value && (
+          <button
+            type="button"
+            onClick={() => {
+              onChange('')
+              setOpen(false)
+            }}
+            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full px-2 py-0.5 text-sm text-muted transition hover:bg-surface-border hover:text-white"
+            aria-label="Clear search"
+          >
+            ✕
+          </button>
+        )}
       </form>
 
       {showSuggestions && (
         <ul
-          className="absolute z-50 mt-1 max-h-72 w-full overflow-y-auto rounded bg-[#2f2f2f] py-1 shadow-lg"
+          className="absolute z-50 mt-2 max-h-72 w-full overflow-y-auto rounded-md bg-surface-elevated py-1 shadow-2xl ring-1 ring-surface-border"
           role="listbox"
         >
           {loadingSuggestions && suggestions.length === 0 ? (
-            <li className="px-4 py-3 text-sm text-[#b3b3b3]">Loading…</li>
+            <li className="px-4 py-3 text-sm text-muted">Loading…</li>
           ) : (
             suggestions.map((item) => (
               <li key={item.id} role="option">
                 <button
                   type="button"
                   onClick={() => handleSelect(item)}
-                  className="flex w-full items-center gap-3 px-4 py-2.5 text-left transition hover:bg-[#404040]"
+                  className="flex w-full items-center gap-3 px-4 py-2.5 text-left transition hover:bg-surface-border"
                 >
                   {item.imageUrl ? (
                     <img
                       src={item.imageUrl}
                       alt=""
-                      className="h-10 w-7 shrink-0 rounded object-cover"
+                      className="h-11 w-8 shrink-0 rounded object-cover ring-1 ring-surface-border"
                     />
                   ) : (
-                    <div className="flex h-10 w-7 shrink-0 items-center justify-center rounded bg-[#404040] text-xs text-[#808080]">
+                    <div className="flex h-11 w-8 shrink-0 items-center justify-center rounded bg-surface-border text-xs text-subtle">
                       N/A
                     </div>
                   )}
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium">{item.title}</p>
-                    <p className="text-xs text-[#b3b3b3]">
+                    <p className="text-xs text-muted">
                       {item.premiered?.slice(0, 4) ?? 'Unknown year'}
                       {item.rating != null && ` · ${item.rating.toFixed(1)} ★`}
                     </p>

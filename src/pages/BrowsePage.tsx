@@ -1,5 +1,5 @@
 import { memo, useCallback } from 'react'
-import { Navbar } from '@/components/layout/Navbar'
+import { PageLayout } from '@/components/layout/PageLayout'
 import { ShowCardSkeleton } from '@/components/media/ShowCardSkeleton'
 import { VirtualizedShowGrid } from '@/components/media/VirtualizedShowGrid'
 import { MAX_BROWSE_SHOWS } from '@/constants/browse'
@@ -17,19 +17,17 @@ export function BrowsePage() {
 
   const sentinelRef = useInfiniteScroll(handleLoadMore, {
     enabled: hasMore && !loading,
+    rootMargin: '600px',
   })
 
   return (
-    <div className="min-h-screen bg-[#141414] font-sans text-white antialiased">
-      <Navbar />
-      <header className="px-[clamp(1rem,4vw,3.75rem)] pt-20 pb-4">
-        <h1 className="text-2xl font-bold">All TV Shows</h1>
-        <p className="mt-1 text-sm text-[#b3b3b3]">
-          {shows.length.toLocaleString()} loaded
-          {hasMore ? ' — scroll for more' : ' — end of catalog'}
-        </p>
+    <PageLayout showFooter={false} navbar="solid">
+      <header className="mx-auto max-w-content px-page-x pt-24 pb-5">
+        <h1 className="text-2xl font-bold md:text-3xl">TV Shows</h1>
         {error && (
-          <p className="mt-2 text-sm text-[#e50914]">{error.userMessage}</p>
+          <p className="mt-3 rounded-sm border border-brand/30 bg-brand/10 px-4 py-2 text-sm">
+            {error.userMessage}
+          </p>
         )}
       </header>
 
@@ -39,23 +37,24 @@ export function BrowsePage() {
           onShowClick={handleShowClick}
           isInWatchlist={isInWatchlist}
           onToggleWatchlist={toggleWatchlist}
+          loading={loading}
         />
       ) : loading ? (
-        <div className="grid grid-cols-2 gap-3 px-[clamp(1rem,4vw,3.75rem)] sm:grid-cols-3 lg:grid-cols-4">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <ShowCardSkeleton key={i} variant="portrait" />
+        <div className="mx-auto grid max-w-content grid-cols-2 gap-x-2 gap-y-5 px-page-x sm:grid-cols-3 md:grid-cols-4 md:gap-x-2.5 lg:grid-cols-5 xl:grid-cols-6">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <ShowCardSkeleton key={i} variant="portrait" layout="grid" />
           ))}
         </div>
       ) : null}
 
-      <div ref={sentinelRef} className="h-1" aria-hidden="true" />
+      <div ref={sentinelRef} className="h-4" aria-hidden="true" />
 
-      {loading && shows.length > 0 && (
-        <p className="py-4 text-center text-sm text-[#b3b3b3]">
-          Loading more shows…
+      {!loading && !hasMore && shows.length > 0 && (
+        <p className="pb-16 text-center text-xs text-subtle">
+          That&apos;s everything for now
         </p>
       )}
-    </div>
+    </PageLayout>
   )
 }
 

@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Navbar } from '@/components/layout/Navbar'
+import { PageLayout } from '@/components/layout/PageLayout'
 import { ContentRow } from '@/components/media/ContentRow'
 import { HeroBanner } from '@/components/media/HeroBanner'
 import { useShowActions } from '@/hooks/useShowActions'
@@ -37,18 +37,22 @@ export function HomePage() {
   )
 
   return (
-    <div className="min-h-screen bg-[#141414] font-sans text-white antialiased">
-      <Navbar />
+    <PageLayout showFooter={false}>
       <main>
-        <HeroBanner show={topShow} loading={loading} />
+        <HeroBanner
+          show={topShow}
+          loading={loading}
+          onPlay={handleShowClick}
+          onMoreInfo={handleShowClick}
+        />
 
         {error && !data && (
-          <div className="flex flex-col items-center gap-4 px-[clamp(1rem,4vw,3.75rem)] py-12 text-center text-[#b3b3b3]">
-            <p>{error.userMessage}</p>
+          <div className="flex flex-col items-center gap-4 px-page-x py-16 text-center text-muted">
+            <p className="max-w-md">{error.userMessage}</p>
             <button
               type="button"
               onClick={() => void refetch()}
-              className="rounded bg-[#2f2f2f] px-6 py-2 text-white transition hover:bg-[#808080]"
+              className="rounded bg-surface-elevated px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-subtle"
             >
               Try again
             </button>
@@ -56,12 +60,12 @@ export function HomePage() {
         )}
 
         {isStale && (
-          <p className="bg-[#e50914]/15 px-[clamp(1rem,4vw,3.75rem)] py-2 text-center text-sm text-[#b3b3b3]">
-            Showing cached data — you may be offline.
+          <p className="bg-brand/10 px-page-x py-2.5 text-center text-sm text-muted">
+            Showing saved data — you may be offline.
           </p>
         )}
 
-        <div className="relative z-[2] pt-8 pb-12">
+        <div className="relative z-[2] pt-20 pb-8">
           <ContentRow
             title="Trending Now"
             shows={rows.trending}
@@ -91,6 +95,6 @@ export function HomePage() {
           />
         </div>
       </main>
-    </div>
+    </PageLayout>
   )
 }
