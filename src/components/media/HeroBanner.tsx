@@ -1,6 +1,7 @@
 import { Skeleton } from '@/components/common/Skeleton'
 import type { MediaItem } from '@/types/media'
 import { BACKDROP_PLACEHOLDER } from '@/utils/placeholders'
+import { toOriginalImageUrl } from '@/utils/imageUrl'
 
 interface HeroBannerProps {
   show: MediaItem | null
@@ -32,7 +33,7 @@ export function HeroBanner({
   }
 
   const backdropUrl =
-    show.imageUrl?.replace('/medium/', '/original/') ?? BACKDROP_PLACEHOLDER
+    toOriginalImageUrl(show.imageUrl) ?? BACKDROP_PLACEHOLDER
 
   return (
     <section className={heroShell} aria-label="Today's Top Show">
@@ -41,6 +42,8 @@ export function HeroBanner({
         alt=""
         className="absolute inset-0 h-full w-full object-cover object-top"
         aria-hidden="true"
+        fetchPriority="high"
+        decoding="async"
       />
       <div
         className="absolute inset-0 bg-gradient-to-r from-surface-base from-0% via-surface-base/55 via-40% to-transparent to-70%"

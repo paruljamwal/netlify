@@ -2,6 +2,7 @@ import { memo, useEffect, useState } from 'react'
 import { WatchlistButton } from '@/components/common/WatchlistButton'
 import type { MediaItem } from '@/types/media'
 import { POSTER_PLACEHOLDER } from '@/utils/placeholders'
+import { toOriginalImageUrl } from '@/utils/imageUrl'
 
 export type ShowCardVariant = 'landscape' | 'portrait'
 export type ShowCardLayout = 'row' | 'grid'
@@ -33,12 +34,14 @@ function ShowCardComponent({
   inWatchlist = false,
   onToggleWatchlist,
 }: ShowCardProps) {
-  const [imgSrc, setImgSrc] = useState(show.imageUrl ?? POSTER_PLACEHOLDER)
+  const [imgSrc, setImgSrc] = useState(
+    () => toOriginalImageUrl(show.imageUrl) ?? POSTER_PLACEHOLDER,
+  )
   const posterHover = layout === 'grid' ? 'poster-hover-grid' : 'poster-hover'
   const aspectClass = layout === 'grid' ? 'aspect-[2/3]' : variantAspect[variant]
 
   useEffect(() => {
-    setImgSrc(show.imageUrl ?? POSTER_PLACEHOLDER)
+    setImgSrc(toOriginalImageUrl(show.imageUrl) ?? POSTER_PLACEHOLDER)
   }, [show.id, show.imageUrl])
 
   return (

@@ -1,5 +1,6 @@
 import type { MediaItem, MediaSearchResult } from '@/types/media'
 import type { TvMazeSearchResult, TvMazeShow } from '@/types/tvmaze'
+import { getShowImageUrl } from '@/utils/imageUrl'
 
 function stripHtml(html: string | null): string | null {
   if (!html) return null
@@ -11,7 +12,7 @@ export function mapShowToMediaItem(show: TvMazeShow): MediaItem {
     id: String(show.id),
     title: show.name,
     type: 'tv',
-    imageUrl: show.image?.medium ?? show.image?.original ?? null,
+    imageUrl: getShowImageUrl(show.image),
     summary: stripHtml(show.summary),
     rating: show.rating?.average ?? null,
     genres: show.genres ?? [],
