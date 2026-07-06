@@ -65,7 +65,7 @@ export function SearchBar({
           onFocus={() => setOpen(true)}
           autoFocus={autoFocus}
           placeholder="Titles, people, genres"
-          className="w-full rounded-md bg-surface-elevated py-3.5 pl-12 pr-12 text-white placeholder-subtle outline-none ring-1 ring-surface-border transition focus:ring-2 focus:ring-brand"
+          className="search-input w-full rounded-md bg-surface-elevated py-3.5 pl-12 pr-12 text-white placeholder-subtle outline-none ring-1 ring-surface-border transition focus:ring-2 focus:ring-brand"
           aria-label="Search shows"
           aria-autocomplete="list"
           aria-expanded={showSuggestions}

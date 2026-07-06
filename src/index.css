@@ -359,6 +359,18 @@ body::-webkit-scrollbar-thumb:hover {
   mask-image: linear-gradient(to left, transparent, black 48px);
 }
 
+/* Hide browser-native clear on type="search" — we use a custom clear button */
+.search-input::-webkit-search-cancel-button,
+.search-input::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
+
+.search-input::-ms-clear {
+  display: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-page-in,
   .animate-toast-in,
