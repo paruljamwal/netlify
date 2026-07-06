@@ -1,4 +1,5 @@
 import { memo, useEffect, useState } from 'react'
+import { WatchlistButton } from '@/components/common/WatchlistButton'
 import type { MediaItem } from '@/types/media'
 import { POSTER_PLACEHOLDER } from '@/utils/placeholders'
 
@@ -33,7 +34,7 @@ function ShowCardComponent({
   onToggleWatchlist,
 }: ShowCardProps) {
   const [imgSrc, setImgSrc] = useState(show.imageUrl ?? POSTER_PLACEHOLDER)
-  const hoverClass = layout === 'grid' ? 'card-hover-grid' : 'card-hover'
+  const posterHover = layout === 'grid' ? 'poster-hover-grid' : 'poster-hover'
   const aspectClass = layout === 'grid' ? 'aspect-[2/3]' : variantAspect[variant]
 
   useEffect(() => {
@@ -42,7 +43,7 @@ function ShowCardComponent({
 
   return (
     <article
-      className={`group ${hoverClass} relative cursor-pointer rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-white hover:z-10 ${layout === 'grid' ? 'grid-card w-full min-w-0' : `shrink-0 snap-start ${variantWidth[variant]}`}`}
+      className={`group relative cursor-pointer rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-white hover:z-20 ${layout === 'grid' ? 'grid-card w-full min-w-0' : `shrink-0 snap-start ${variantWidth[variant]}`}`}
       onClick={() => onClick?.(show)}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
@@ -53,25 +54,18 @@ function ShowCardComponent({
         }
       }}
     >
-      <div className={`relative w-full overflow-hidden rounded-sm bg-surface-raised ${aspectClass}`}>
+      <div className="absolute right-2 top-2 z-30">
         {onToggleWatchlist && (
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation()
-              onToggleWatchlist(show)
-            }}
-            className={`absolute right-1.5 top-1.5 z-10 flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold opacity-0 transition group-hover:opacity-100 group-focus-within:opacity-100 ${
-              inWatchlist
-                ? 'bg-brand text-white opacity-100'
-                : 'bg-black/70 text-white hover:bg-black/90'
-            }`}
-            aria-label={inWatchlist ? 'Remove from My List' : 'Add to My List'}
-          >
-            {inWatchlist ? '✓' : '+'}
-          </button>
+          <WatchlistButton
+            inWatchlist={inWatchlist}
+            onToggle={() => onToggleWatchlist(show)}
+          />
         )}
+      </div>
 
+      <div
+        className={`${posterHover} relative w-full overflow-hidden rounded-sm bg-surface-raised shadow-[0_2px_8px_rgba(0,0,0,0.35)] ${aspectClass}`}
+      >
         {show.rating != null && (
           <span className="absolute bottom-1.5 left-1.5 z-10 rounded-sm bg-black/75 px-1.5 py-0.5 text-[10px] font-semibold text-white">
             {show.rating.toFixed(1)}
@@ -81,7 +75,7 @@ function ShowCardComponent({
         <img
           src={imgSrc}
           alt={show.title}
-          className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.03]"
+          className="h-full w-full object-cover"
           loading="lazy"
           onError={() => setImgSrc(POSTER_PLACEHOLDER)}
         />

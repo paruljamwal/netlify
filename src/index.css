@@ -177,21 +177,138 @@ body::-webkit-scrollbar-thumb:hover {
   animation: modalIn 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
+.watchlist-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  border: 2px solid rgb(255 255 255 / 0.95);
+  background: rgb(255 255 255 / 0.96);
+  color: #141414;
+  box-shadow: 0 2px 12px rgb(0 0 0 / 0.5);
+  transition:
+    transform 0.18s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.18s ease,
+    opacity 0.18s ease;
+}
+
+.watchlist-btn svg {
+  display: block;
+  shape-rendering: geometricPrecision;
+}
+
+.watchlist-btn:hover {
+  transform: scale(1.12);
+  background: white;
+}
+
+.watchlist-btn.is-active {
+  background: var(--color-brand);
+  border-color: white;
+  color: white;
+  opacity: 1;
+  box-shadow: 0 2px 14px rgb(229 9 20 / 0.55);
+}
+
+.watchlist-btn.is-active:hover {
+  background: var(--color-brand-hover);
+}
+
+@keyframes watchlistTipAbove {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-100% + 6px));
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -100%);
+  }
+}
+
+@keyframes watchlistTipBelow {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -6px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.watchlist-tip-portal {
+  position: fixed;
+  z-index: 9999;
+  transform: translate(-50%, -100%);
+  white-space: nowrap;
+  border-radius: 6px;
+  background: rgb(255 255 255 / 0.98);
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  color: #141414;
+  box-shadow: 0 6px 24px rgb(0 0 0 / 0.45);
+  pointer-events: none;
+  animation: watchlistTipAbove 0.2s ease-out forwards;
+}
+
+.watchlist-tip-portal::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border: 5px solid transparent;
+  border-top-color: rgb(255 255 255 / 0.98);
+}
+
+.watchlist-tip-portal--below {
+  transform: translate(-50%, 0);
+  animation-name: watchlistTipBelow;
+}
+
+.watchlist-tip-portal--below::after {
+  top: auto;
+  bottom: 100%;
+  border-top-color: transparent;
+  border-bottom-color: rgb(255 255 255 / 0.98);
+}
+
 .card-hover {
   transition:
     transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 0.28s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-@media (hover: hover) {
-  .card-hover {
-    will-change: transform;
-  }
+.poster-hover {
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
 
+.poster-hover-grid {
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) {
   .card-hover:hover,
   .card-hover:focus-visible {
     transform: scale(1.06);
     box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+  }
+
+  .poster-hover:hover,
+  .poster-hover:focus-visible {
+    transform: scale(1.05);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  .poster-hover-grid:hover,
+  .poster-hover-grid:focus-visible {
+    transform: scale(1.03);
   }
 
   .card-hover-grid {
@@ -222,12 +339,26 @@ body::-webkit-scrollbar-thumb:hover {
     animation: none;
   }
 
-  .card-hover {
+  .watchlist-tip-portal {
+    animation: none;
+    opacity: 1;
+  }
+
+  .card-hover,
+  .poster-hover,
+  .poster-hover-grid,
+  .card-hover-grid {
     transition: none;
   }
 
   .card-hover:hover,
-  .card-hover:focus-visible {
+  .card-hover:focus-visible,
+  .poster-hover:hover,
+  .poster-hover:focus-visible,
+  .card-hover-grid:hover,
+  .card-hover-grid:focus-visible,
+  .poster-hover-grid:hover,
+  .poster-hover-grid:focus-visible {
     transform: none;
   }
 }
