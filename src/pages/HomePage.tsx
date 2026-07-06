@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { PageLayout } from '@/components/layout/PageLayout'
 import { ContentRow } from '@/components/media/ContentRow'
 import { HeroBanner } from '@/components/media/HeroBanner'
+import { HOME_SECTIONS } from '@/constants/brand'
 import { useShowActions } from '@/hooks/useShowActions'
 import { useTrendingShows } from '@/hooks'
 import type { MediaItem } from '@/types/media'
@@ -67,7 +68,7 @@ export function HomePage() {
 
         <div className="relative z-[2] pt-20 pb-8">
           <ContentRow
-            title="Trending Now"
+            title={HOME_SECTIONS.trending}
             shows={rows.trending}
             variant="landscape"
             loading={loading}
@@ -76,7 +77,7 @@ export function HomePage() {
             onToggleWatchlist={toggleWatchlist}
           />
           <ContentRow
-            title="Popular on Netflix"
+            title={HOME_SECTIONS.popular}
             shows={rows.popular}
             variant="portrait"
             loading={loading}
@@ -85,7 +86,7 @@ export function HomePage() {
             onToggleWatchlist={toggleWatchlist}
           />
           <ContentRow
-            title="TV Classics"
+            title={HOME_SECTIONS.classics}
             shows={rows.classics}
             variant="landscape"
             loading={loading}

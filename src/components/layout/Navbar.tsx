@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { BrandLogo } from '@/components/layout/BrandLogo'
 import { ROUTES } from '@/constants/routes'
 import { useNetwork } from '@/context/NetworkContext'
 import { useProfile } from '@/context/ProfileContext'
@@ -49,12 +50,7 @@ export function Navbar({ variant = 'default' }: { variant?: 'default' | 'solid' 
     >
       <div className="mx-auto flex h-full max-w-content items-center justify-between px-page-x">
         <div className="flex items-center gap-6 min-[900px]:gap-10">
-          <Link
-            to={ROUTES.HOME}
-            className="text-[1.35rem] font-extrabold tracking-wider text-brand"
-          >
-            NETFLIX
-          </Link>
+          <BrandLogo size="nav" />
 
           <nav
             className="hidden items-center gap-6 min-[900px]:flex"

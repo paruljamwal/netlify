@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom'
+import { BrandLogo } from '@/components/layout/BrandLogo'
+import { BRAND } from '@/constants/brand'
 import { ROUTES } from '@/constants/routes'
 
 const links = [
@@ -12,7 +14,8 @@ export function Footer() {
   return (
     <footer className="mt-auto border-t border-surface-border bg-surface-base px-page-x py-10">
       <div className="mx-auto max-w-content">
-        <p className="text-2xl font-extrabold tracking-wider text-brand">NETFLIX</p>
+        <BrandLogo size="footer" />
+        <p className="mt-4 max-w-sm text-sm text-muted">{BRAND.footerLine}</p>
         <nav
           className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-4"
           aria-label="Footer"
