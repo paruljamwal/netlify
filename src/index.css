@@ -39,10 +39,15 @@
   font-size: 1rem;
   font-weight: 600;
   color: #141414;
+  cursor: pointer;
   transition: transform 0.2s ease, background-color 0.2s ease;
   &:hover {
     transform: scale(1.04);
     background-color: rgb(255 255 255 / 0.85);
+  }
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
   }
 }
 
@@ -56,10 +61,15 @@
   font-size: 1rem;
   font-weight: 600;
   color: white;
+  cursor: pointer;
   transition: transform 0.2s ease, background-color 0.2s ease;
   &:hover {
     transform: scale(1.04);
     background-color: rgb(109 109 110 / 0.5);
+  }
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
   }
 }
 
@@ -79,6 +89,24 @@ body {
   margin: 0;
   scrollbar-color: #404040 #141414;
   scrollbar-width: thin;
+}
+
+@layer base {
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']),
+  summary,
+  label[for] {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [aria-disabled='true'] {
+    cursor: not-allowed;
+  }
+
+  a[href] {
+    cursor: pointer;
+  }
 }
 
 body::-webkit-scrollbar {
@@ -187,6 +215,7 @@ body::-webkit-scrollbar-thumb:hover {
   border: 2px solid rgb(255 255 255 / 0.95);
   background: rgb(255 255 255 / 0.96);
   color: #141414;
+  cursor: pointer;
   box-shadow: 0 2px 12px rgb(0 0 0 / 0.5);
   transition:
     transform 0.18s cubic-bezier(0.22, 1, 0.36, 1),

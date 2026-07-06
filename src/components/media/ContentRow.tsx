@@ -29,7 +29,7 @@ function ScrollButton({
     <button
       type="button"
       onClick={onClick}
-      className={`absolute top-0 z-20 hidden h-full w-12 items-center justify-center bg-black/50 text-2xl text-white opacity-0 transition hover:bg-black/70 group-hover/row:opacity-100 md:flex ${direction === 'left' ? 'left-0' : 'right-0'}`}
+      className={`absolute top-0 z-20 hidden h-full w-12 cursor-pointer items-center justify-center bg-black/50 text-2xl text-white opacity-0 transition hover:bg-black/70 group-hover/row:opacity-100 md:flex ${direction === 'left' ? 'left-0' : 'right-0'}`}
       aria-label={direction === 'left' ? 'Scroll left' : 'Scroll right'}
     >
       {direction === 'left' ? '‹' : '›'}

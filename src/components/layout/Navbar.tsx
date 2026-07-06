@@ -74,7 +74,7 @@ export function Navbar({ variant = 'default' }: { variant?: 'default' | 'solid' 
 
           <Link
             to={ROUTES.SEARCH}
-            className={`flex h-8 w-8 items-center justify-center rounded text-white transition hover:bg-white/10 hover:ring-2 hover:ring-white/20 ${
+            className={`flex h-8 w-8 cursor-pointer items-center justify-center rounded text-white transition hover:bg-white/10 hover:ring-2 hover:ring-white/20 ${
               pathname === ROUTES.SEARCH
                 ? 'bg-white/10 ring-2 ring-white/30'
                 : ''
@@ -87,7 +87,7 @@ export function Navbar({ variant = 'default' }: { variant?: 'default' | 'solid' 
 
           <Link
             to={ROUTES.PROFILE}
-            className="flex h-8 w-8 items-center justify-center rounded bg-brand text-sm font-bold text-white transition hover:bg-brand-hover hover:ring-2 hover:ring-white/30"
+            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded bg-brand text-sm font-bold text-white transition hover:bg-brand-hover hover:ring-2 hover:ring-white/30"
             aria-label="Profile"
           >
             {initial}
@@ -95,7 +95,7 @@ export function Navbar({ variant = 'default' }: { variant?: 'default' | 'solid' 
 
           <button
             type="button"
-            className="rounded p-2 text-white min-[900px]:hidden"
+            className="cursor-pointer rounded p-2 text-white min-[900px]:hidden"
             onClick={() => setMenuOpen((o) => !o)}
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={menuOpen}
