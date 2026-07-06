@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { BrandLogo } from '@/components/layout/BrandLogo'
+import { SearchIcon } from '@/components/common/SearchIcon'
 import { ROUTES } from '@/constants/routes'
 import { useNetwork } from '@/context/NetworkContext'
 import { useProfile } from '@/context/ProfileContext'
@@ -73,10 +74,15 @@ export function Navbar({ variant = 'default' }: { variant?: 'default' | 'solid' 
 
           <Link
             to={ROUTES.SEARCH}
-            className="rounded-full p-2 text-lg text-white transition hover:bg-white/10"
+            className={`flex h-8 w-8 items-center justify-center rounded text-white transition hover:bg-white/10 hover:ring-2 hover:ring-white/20 ${
+              pathname === ROUTES.SEARCH
+                ? 'bg-white/10 ring-2 ring-white/30'
+                : ''
+            }`}
             aria-label="Search"
+            aria-current={pathname === ROUTES.SEARCH ? 'page' : undefined}
           >
-            ⌕
+            <SearchIcon size={18} />
           </Link>
 
           <Link

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { MIN_NAME_SEARCH_LENGTH } from '@/constants/search'
+import { SearchIcon } from '@/components/common/SearchIcon'
 import { useSearchSuggestions } from '@/hooks/useSearchSuggestions'
 import type { MediaItem } from '@/types/media'
 import { detectSearchMode } from '@/utils/search'
@@ -71,10 +72,10 @@ export function SearchBar({
           role="combobox"
         />
         <span
-          className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-xl text-muted"
+          className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted"
           aria-hidden="true"
         >
-          ⌕
+          <SearchIcon size={20} />
         </span>
         {value && (
           <button

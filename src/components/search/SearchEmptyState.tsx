@@ -1,3 +1,4 @@
+import { SearchIcon } from '@/components/common/SearchIcon'
 import type { SearchMode } from '@/utils/search'
 
 interface SearchEmptyStateProps {
@@ -18,8 +19,8 @@ export function SearchEmptyState({
   if (mode === 'idle' || !hasSearched) {
     return (
       <div className="flex flex-col items-center rounded-lg border border-dashed border-surface-border bg-surface-raised/40 px-6 py-20 text-center">
-        <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-surface-elevated text-3xl text-muted">
-          ⌕
+        <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-surface-elevated text-muted">
+          <SearchIcon size={28} />
         </div>
         <h2 className="text-xl font-semibold">Start searching</h2>
         <p className="mt-2 max-w-md text-sm text-muted">
