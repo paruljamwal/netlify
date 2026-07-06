@@ -19,7 +19,7 @@ const PLACEHOLDER =
 
 const variantWidth: Record<ShowCardVariant, string> = {
   landscape: 'w-[clamp(200px,18vw,280px)]',
-  portrait: 'w-[clamp(120px,10vw,160px)] lg:w-full',
+  portrait: 'w-[clamp(120px,10vw,160px)]',
 }
 
 const variantAspect: Record<ShowCardVariant, string> = {
@@ -36,7 +36,7 @@ function ShowCardComponent({
 }: ShowCardProps) {
   return (
     <article
-      className={`group shrink-0 cursor-pointer rounded transition-all duration-300 ease-out hover:z-10 hover:scale-[1.08] hover:shadow-[0_8px_24px_rgba(0,0,0,0.45)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-white ${variantWidth[variant]}`}
+      className={`group card-hover relative shrink-0 cursor-pointer rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-white hover:z-10 ${variantWidth[variant]}`}
       onClick={() => onClick?.(show)}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
@@ -57,7 +57,7 @@ function ShowCardComponent({
               e.stopPropagation()
               onToggleWatchlist(show)
             }}
-            className={`absolute right-2 top-2 z-10 rounded-full px-2 py-1 text-xs font-bold transition ${
+            className={`absolute right-2 top-2 z-10 rounded-full px-2 py-1 text-xs font-bold transition-transform duration-200 hover:scale-110 ${
               inWatchlist
                 ? 'bg-[#e50914] text-white'
                 : 'bg-black/60 text-white hover:bg-black/80'
@@ -70,10 +70,10 @@ function ShowCardComponent({
         <img
           src={show.imageUrl ?? PLACEHOLDER}
           alt={show.title}
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
           loading="lazy"
         />
-        <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/85 via-black/20 to-transparent p-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100 md:p-3">
+        <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/85 via-black/20 to-transparent p-2 opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100 group-focus-visible:opacity-100 md:p-3">
           <h3
             className={`m-0 line-clamp-2 font-semibold leading-tight ${variant === 'portrait' ? 'text-xs' : 'text-sm'}`}
           >

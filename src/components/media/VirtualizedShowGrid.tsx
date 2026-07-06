@@ -10,23 +10,44 @@ import { ShowCard } from './ShowCard'
 
 interface VirtualizedShowGridProps {
   shows: MediaItem[]
+  onShowClick?: (show: MediaItem) => void
+  isInWatchlist?: (id: string) => boolean
+  onToggleWatchlist?: (show: MediaItem) => void
 }
 
 const GridRow = memo(function GridRow({
   rowShows,
+  onShowClick,
+  isInWatchlist,
+  onToggleWatchlist,
 }: {
   rowShows: MediaItem[]
+  onShowClick?: (show: MediaItem) => void
+  isInWatchlist?: (id: string) => boolean
+  onToggleWatchlist?: (show: MediaItem) => void
 }) {
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
       {rowShows.map((show) => (
-        <ShowCard key={show.id} show={show} variant="portrait" />
+        <ShowCard
+          key={show.id}
+          show={show}
+          variant="portrait"
+          onClick={onShowClick}
+          inWatchlist={isInWatchlist?.(show.id)}
+          onToggleWatchlist={onToggleWatchlist}
+        />
       ))}
     </div>
   )
 })
 
-export function VirtualizedShowGrid({ shows }: VirtualizedShowGridProps) {
+export function VirtualizedShowGrid({
+  shows,
+  onShowClick,
+  isInWatchlist,
+  onToggleWatchlist,
+}: VirtualizedShowGridProps) {
   const parentRef = useRef<HTMLDivElement>(null)
 
   const rowCount = useMemo(
@@ -34,7 +55,6 @@ export function VirtualizedShowGrid({ shows }: VirtualizedShowGridProps) {
     [shows.length],
   )
 
-  // only render rows near the viewport
   const virtualizer = useVirtualizer({
     count: rowCount,
     getScrollElement: () => parentRef.current,
@@ -66,7 +86,12 @@ export function VirtualizedShowGrid({ shows }: VirtualizedShowGridProps) {
                 transform: `translateY(${virtualRow.start}px)`,
               }}
             >
-              <GridRow rowShows={rowShows} />
+              <GridRow
+                rowShows={rowShows}
+                onShowClick={onShowClick}
+                isInWatchlist={isInWatchlist}
+                onToggleWatchlist={onToggleWatchlist}
+              />
             </div>
           )
         })}

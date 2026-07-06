@@ -4,10 +4,12 @@ import { ShowCardSkeleton } from '@/components/media/ShowCardSkeleton'
 import { VirtualizedShowGrid } from '@/components/media/VirtualizedShowGrid'
 import { MAX_BROWSE_SHOWS } from '@/constants/browse'
 import { useInfiniteScroll, useInfiniteShows } from '@/hooks'
+import { useShowActions } from '@/hooks/useShowActions'
 
 export function BrowsePage() {
   const { shows, loading, hasMore, error, loadMore } =
     useInfiniteShows(MAX_BROWSE_SHOWS)
+  const { handleShowClick, toggleWatchlist, isInWatchlist } = useShowActions()
 
   const handleLoadMore = useCallback(() => {
     void loadMore()
@@ -32,7 +34,12 @@ export function BrowsePage() {
       </header>
 
       {shows.length > 0 ? (
-        <VirtualizedShowGrid shows={shows} />
+        <VirtualizedShowGrid
+          shows={shows}
+          onShowClick={handleShowClick}
+          isInWatchlist={isInWatchlist}
+          onToggleWatchlist={toggleWatchlist}
+        />
       ) : loading ? (
         <div className="grid grid-cols-2 gap-3 px-[clamp(1rem,4vw,3.75rem)] sm:grid-cols-3 lg:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (

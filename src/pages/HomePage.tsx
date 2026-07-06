@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { Navbar } from '@/components/layout/Navbar'
 import { ContentRow } from '@/components/media/ContentRow'
 import { HeroBanner } from '@/components/media/HeroBanner'
-import { useProfile } from '@/context/ProfileContext'
+import { useShowActions } from '@/hooks/useShowActions'
 import { useTrendingShows } from '@/hooks'
 import type { MediaItem } from '@/types/media'
 
@@ -25,9 +25,7 @@ function splitRows(shows: MediaItem[], topId: string | undefined) {
 
 export function HomePage() {
   const { data, loading, error, isStale, refetch } = useTrendingShows(0)
-  const { recordWatch, toggleWatchlist, isInWatchlist } = useProfile()
-
-  const handleShowClick = (show: MediaItem) => recordWatch(show)
+  const { handleShowClick, toggleWatchlist, isInWatchlist } = useShowActions()
 
   const topShow = useMemo(() => (data ? pickTopShow(data) : null), [data])
   const rows = useMemo(

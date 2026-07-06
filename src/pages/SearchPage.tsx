@@ -5,7 +5,7 @@ import { SearchBar } from '@/components/search/SearchBar'
 import { SearchEmptyState } from '@/components/search/SearchEmptyState'
 import { SearchResults } from '@/components/search/SearchResults'
 import { useMediaSearch } from '@/hooks/useMediaSearch'
-import { useProfile } from '@/context/ProfileContext'
+import { useShowActions } from '@/hooks/useShowActions'
 import type { MediaItem } from '@/types/media'
 
 export function SearchPage() {
@@ -14,7 +14,7 @@ export function SearchPage() {
 
   const { results, loading, error, mode, debouncedQuery, hasSearched, isStale } =
     useMediaSearch({ query })
-  const { recordWatch, toggleWatchlist, isInWatchlist } = useProfile()
+  const { handleShowClick, toggleWatchlist, isInWatchlist } = useShowActions()
 
   useEffect(() => {
     const param = searchParams.get('q') ?? ''
@@ -88,7 +88,7 @@ export function SearchPage() {
               results={results}
               loading={loading}
               mode={mode}
-              onShowClick={recordWatch}
+              onShowClick={handleShowClick}
               isInWatchlist={isInWatchlist}
               onToggleWatchlist={toggleWatchlist}
             />

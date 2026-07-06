@@ -1,5 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { ConnectionStatusModal } from '@/components/common/ConnectionStatusModal'
+import { AnimatedOutlet } from '@/components/layout/AnimatedOutlet'
+import { DetailModalProvider } from '@/context/DetailModalContext'
 import { NetworkProvider } from '@/context/NetworkContext'
 import { ProfileProvider } from '@/context/ProfileContext'
 import { ROUTES } from '@/constants/routes'
@@ -13,13 +15,17 @@ function App() {
     <BrowserRouter>
       <NetworkProvider>
         <ProfileProvider>
-          <ConnectionStatusModal />
-          <Routes>
-            <Route path={ROUTES.HOME} element={<HomePage />} />
-            <Route path={ROUTES.BROWSE} element={<BrowsePage />} />
-            <Route path={ROUTES.SEARCH} element={<SearchPage />} />
-            <Route path={ROUTES.PROFILE} element={<ProfilePage />} />
-          </Routes>
+          <DetailModalProvider>
+            <ConnectionStatusModal />
+            <Routes>
+              <Route element={<AnimatedOutlet />}>
+                <Route path={ROUTES.HOME} element={<HomePage />} />
+                <Route path={ROUTES.BROWSE} element={<BrowsePage />} />
+                <Route path={ROUTES.SEARCH} element={<SearchPage />} />
+                <Route path={ROUTES.PROFILE} element={<ProfilePage />} />
+              </Route>
+            </Routes>
+          </DetailModalProvider>
         </ProfileProvider>
       </NetworkProvider>
     </BrowserRouter>

@@ -1,11 +1,7 @@
-interface SkeletonProps {
-  className?: string
-}
-
-export function Skeleton({ className = '' }: SkeletonProps) {
+export function Skeleton({ className = '' }: { className?: string }) {
   return (
     <div
-      className={`block h-full w-full animate-pulse rounded bg-[#2f2f2f] ${className}`}
+      className={`block h-full w-full animate-shimmer rounded ${className}`}
       aria-hidden="true"
     />
   )

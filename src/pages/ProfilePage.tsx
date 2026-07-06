@@ -4,6 +4,7 @@ import { ProfileSection } from '@/components/profile/ProfileSection'
 import { ProfileShowRow } from '@/components/profile/ProfileShowRow'
 import { ROUTES } from '@/constants/routes'
 import { useProfile } from '@/context/ProfileContext'
+import { useShowActions } from '@/hooks/useShowActions'
 
 function formatWatchedAt(iso: string): string {
   const date = new Date(iso)
@@ -20,10 +21,10 @@ export function ProfilePage() {
     watchlist,
     history,
     removeFromWatchlist,
-    recordWatch,
     signIn,
     signOut,
   } = useProfile()
+  const { handleShowClick } = useShowActions()
 
   const historyShows = history.map((e) => e.show)
 
@@ -80,7 +81,7 @@ export function ProfilePage() {
           <ProfileShowRow
             shows={watchlist}
             onRemove={removeFromWatchlist}
-            onSelect={recordWatch}
+            onSelect={handleShowClick}
           />
         </ProfileSection>
 
@@ -89,7 +90,7 @@ export function ProfilePage() {
           isEmpty={history.length === 0}
           emptyMessage="Shows you open will appear here."
         >
-          <ProfileShowRow shows={historyShows} onSelect={recordWatch} />
+          <ProfileShowRow shows={historyShows} onSelect={handleShowClick} />
           {history.length > 0 && (
             <ul className="mt-4 space-y-1 text-xs text-[#808080]">
               {history.slice(0, 5).map((entry) => (
