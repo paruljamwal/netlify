@@ -3,6 +3,8 @@ export type { ApiResponse, ApiResponseMeta } from './apiClient'
 export { ApiError, toApiError } from './apiError'
 export { mapShowToMediaItem, mapSearchResults } from './mediaMappers'
 export { mediaService } from './mediaService'
+export { isBrowserOnline, subscribeToNetwork } from './networkService'
+export { onReconnect, notifyReconnect, warmOfflineCache } from './offlineService'
 export type {
   BrowseShowsOptions,
   SearchShowsOptions,

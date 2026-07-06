@@ -1,8 +1,10 @@
 import { Link, useLocation } from 'react-router-dom'
 import { ROUTES } from '@/constants/routes'
+import { useNetwork } from '@/context/NetworkContext'
 
 export function Navbar() {
   const { pathname } = useLocation()
+  const { isOnline } = useNetwork()
 
   const linkClass = (path: string) =>
     pathname === path
@@ -38,6 +40,9 @@ export function Navbar() {
           </nav>
         </div>
         <div className="flex items-center gap-4">
+          {!isOnline && (
+            <span className="hidden text-xs text-[#808080] sm:inline">Offline</span>
+          )}
           <Link
             to={ROUTES.SEARCH}
             className="p-1 text-xl text-white transition hover:opacity-70"

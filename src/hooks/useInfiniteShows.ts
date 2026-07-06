@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { MAX_BROWSE_SHOWS, TVMAZE_PAGE_SIZE } from '@/constants/browse'
 import { mediaService } from '@/services'
 import { ApiError, toApiError } from '@/services/apiError'
+import { onReconnect } from '@/services/offlineService'
 import type { MediaItem } from '@/types/media'
 import { mergeUniqueShows } from '@/utils/mergeShows'
 
@@ -91,6 +92,30 @@ export function useInfiniteShows(
       abortRef.current?.abort()
     }
   }, [loadMore])
+
+  useEffect(() => {
+    return onReconnect(async () => {
+      const pagesLoaded = pageRef.current
+      if (pagesLoaded === 0) return
+
+      try {
+        let merged: MediaItem[] = []
+        for (let p = 0; p < pagesLoaded; p++) {
+          const { items } = await mediaService.browseShows({
+            page: p,
+            forceRefresh: true,
+          })
+          merged = mergeUniqueShows(merged, items)
+        }
+        if (mountedRef.current) {
+          setShows(merged.slice(0, maxItems))
+          setError(null)
+        }
+      } catch {
+        // keep cached list on failed refresh
+      }
+    })
+  }, [maxItems])
 
   return { shows, loading, hasMore, error, loadMore }
 }

@@ -12,7 +12,7 @@ export function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const [query, setQuery] = useState(searchParams.get('q') ?? '')
 
-  const { results, loading, error, mode, debouncedQuery, hasSearched } =
+  const { results, loading, error, mode, debouncedQuery, hasSearched, isStale } =
     useMediaSearch({ query })
   const { recordWatch, toggleWatchlist, isInWatchlist } = useProfile()
 
@@ -74,6 +74,12 @@ export function SearchPage() {
           <div className="mt-6 rounded bg-[#e50914]/10 px-4 py-3 text-sm text-[#e50914]">
             {error.userMessage}
           </div>
+        )}
+
+        {isStale && (
+          <p className="mt-4 text-center text-sm text-[#b3b3b3]">
+            Offline mode — showing saved results
+          </p>
         )}
 
         <div className="mt-8">

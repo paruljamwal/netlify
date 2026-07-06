@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { AsyncState } from '@/types/api'
 import { toApiError } from '@/services/apiError'
+import { onReconnect } from '@/services/offlineService'
 
 interface UseApiOptions {
   enabled?: boolean
@@ -67,6 +68,13 @@ export function useApi<T>(
     void execute()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled, execute, ...deps])
+
+  useEffect(() => {
+    if (!enabled) return
+    return onReconnect(() => {
+      void execute()
+    })
+  }, [enabled, execute])
 
   return { ...state, refetch: execute }
 }

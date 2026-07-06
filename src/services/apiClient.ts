@@ -1,6 +1,7 @@
 import { API_BASE_URL, API_TIMEOUT_MS, CACHE_TTL } from '@/constants'
 import type { ApiRequestConfig } from '@/types/api'
-import { getFromCache, setCache } from '@/utils/cache'
+import { getFromCache, isCacheEntryStale, setCache } from '@/utils/cache'
+import { isBrowserOnline } from './networkService'
 import { ApiError, toApiError } from './apiError'
 
 export interface ApiResponseMeta {
@@ -47,15 +48,26 @@ export async function apiClient<T>(
   const url = `${API_BASE_URL}${endpoint}`
   const cacheKey = config.cacheKey ?? endpoint
   const cacheTtlMs = config.cacheTtlMs ?? CACHE_TTL.DEFAULT
+  const offline = !isBrowserOnline()
 
   if (!config.forceRefresh) {
-    const cached = getFromCache<T>(cacheKey)
+    const cached = getFromCache<T>(cacheKey, { allowStale: offline })
     if (cached !== null) {
       return {
         data: cached,
-        meta: { fromCache: true, isStale: false },
+        meta: {
+          fromCache: true,
+          isStale: offline || isCacheEntryStale(cacheKey),
+        },
       }
     }
+  }
+
+  if (offline) {
+    throw new ApiError('No internet connection.', {
+      endpoint,
+      isNetworkError: true,
+    })
   }
 
   try {

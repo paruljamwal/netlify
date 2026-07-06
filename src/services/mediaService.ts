@@ -36,6 +36,7 @@ export interface ShowDetailOptions {
 export interface UnifiedSearchOptions {
   query: string
   signal?: AbortSignal
+  forceRefresh?: boolean
 }
 
 export const mediaService = {
@@ -95,9 +96,9 @@ export const mediaService = {
     }
   },
 
-  async searchById(id: string, signal?: AbortSignal): Promise<MediaItem[]> {
+  async searchById(id: string, signal?: AbortSignal, forceRefresh = false): Promise<MediaItem[]> {
     try {
-      const { item } = await this.getShowDetail({ id, signal })
+      const { item } = await this.getShowDetail({ id, signal, forceRefresh })
       return [item]
     } catch (error) {
       // bad id, just return empty
@@ -106,12 +107,16 @@ export const mediaService = {
     }
   },
 
-  async searchByYear(year: string, signal?: AbortSignal): Promise<MediaItem[]> {
+  async searchByYear(
+    year: string,
+    signal?: AbortSignal,
+    forceRefresh = false,
+  ): Promise<MediaItem[]> {
     const matches: MediaItem[] = []
 
     // no year filter on tvmaze, walk browse pages
     for (let page = 0; page < YEAR_SEARCH_MAX_PAGES; page++) {
-      const { items } = await this.browseShows({ page, signal })
+      const { items } = await this.browseShows({ page, signal, forceRefresh })
       matches.push(...filterShowsByYear(items, year))
       if (items.length === 0) break
     }
@@ -119,23 +124,27 @@ export const mediaService = {
     return matches
   },
 
-  async search({ query, signal }: UnifiedSearchOptions): Promise<MediaSearchResult[]> {
+  async search({
+    query,
+    signal,
+    forceRefresh = false,
+  }: UnifiedSearchOptions): Promise<MediaSearchResult[]> {
     const trimmed = normalizeSearchQuery(query)
     const mode = detectSearchMode(trimmed)
 
     if (mode === 'idle') return []
 
     if (mode === 'id') {
-      const items = await this.searchById(trimmed, signal)
+      const items = await this.searchById(trimmed, signal, forceRefresh)
       return items.map((item) => ({ score: 1, item }))
     }
 
     if (mode === 'year') {
-      const items = await this.searchByYear(trimmed, signal)
+      const items = await this.searchByYear(trimmed, signal, forceRefresh)
       return items.map((item) => ({ score: 1, item }))
     }
 
-    const { results } = await this.searchShows({ query: trimmed, signal })
+    const { results } = await this.searchShows({ query: trimmed, signal, forceRefresh })
     return results
   },
 
