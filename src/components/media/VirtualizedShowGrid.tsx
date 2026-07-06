@@ -34,6 +34,7 @@ export function VirtualizedShowGrid({ shows }: VirtualizedShowGridProps) {
     [shows.length],
   )
 
+  // only render rows near the viewport
   const virtualizer = useVirtualizer({
     count: rowCount,
     getScrollElement: () => parentRef.current,

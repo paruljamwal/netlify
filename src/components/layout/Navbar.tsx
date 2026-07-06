@@ -26,12 +26,9 @@ export function Navbar() {
             <Link to={ROUTES.BROWSE} className={linkClass(ROUTES.BROWSE)}>
               TV Shows
             </Link>
-            <a
-              href="#"
-              className="text-sm font-medium text-[#b3b3b3] transition hover:text-white"
-            >
-              Movies
-            </a>
+            <Link to={ROUTES.SEARCH} className={linkClass(ROUTES.SEARCH)}>
+              Search
+            </Link>
             <a
               href="#"
               className="text-sm font-medium text-[#b3b3b3] transition hover:text-white"
@@ -41,13 +38,13 @@ export function Navbar() {
           </nav>
         </div>
         <div className="flex items-center gap-4">
-          <button
-            type="button"
+          <Link
+            to={ROUTES.SEARCH}
             className="p-1 text-xl text-white transition hover:opacity-70"
             aria-label="Search"
           >
             ⌕
-          </button>
+          </Link>
           <button
             type="button"
             className="flex h-8 w-8 items-center justify-center rounded bg-[#e50914] text-sm font-bold text-white transition hover:scale-105"

@@ -8,3 +8,9 @@ export {
   GRID_ROW_HEIGHT,
   GRID_OVERSCAN,
 } from './browse'
+export {
+  SEARCH_DEBOUNCE_MS,
+  AUTOCOMPLETE_LIMIT,
+  YEAR_SEARCH_MAX_PAGES,
+  MIN_NAME_SEARCH_LENGTH,
+} from './search'

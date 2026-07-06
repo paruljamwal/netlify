@@ -13,8 +13,8 @@ export function useShowSearch({ query, minLength = 2 }: UseShowSearchOptions) {
 
   return useApi<MediaSearchResult[]>(
     async () => {
-      const { results, meta } = await mediaService.searchShows({ query: trimmed })
-      return { data: results, fromCache: meta.fromCache, isStale: meta.isStale }
+      const results = await mediaService.search({ query: trimmed })
+      return { data: results, fromCache: false, isStale: false }
     },
     [trimmed],
     { enabled },

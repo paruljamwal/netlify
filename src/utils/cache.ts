@@ -23,7 +23,7 @@ function writeStore(store: CacheStore): void {
   try {
     localStorage.setItem(CACHE_STORAGE_KEY, JSON.stringify(store))
   } catch {
-    // storage unavailable
+    // quota / private mode
   }
 }
 

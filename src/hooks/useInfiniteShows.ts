@@ -36,7 +36,7 @@ export function useInfiniteShows(
       setError(null)
     }
 
-    abortRef.current?.abort()
+    abortRef.current?.abort() // fast scroll
     const controller = new AbortController()
     abortRef.current = controller
 
