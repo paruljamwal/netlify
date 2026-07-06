@@ -1,12 +1,87 @@
-import { API_BASE_URL } from '@/constants'
+import { API_BASE_URL, API_TIMEOUT_MS, CACHE_TTL } from '@/constants'
+import type { ApiRequestConfig } from '@/types/api'
+import { getFromCache, setCache } from '@/utils/cache'
+import { ApiError, toApiError } from './apiError'
 
-/** Thin fetch wrapper — add auth headers, error handling, and retries here */
-export async function apiClient<T>(endpoint: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, init)
+export interface ApiResponseMeta {
+  fromCache: boolean
+  isStale: boolean
+}
 
-  if (!response.ok) {
-    throw new Error(`API error: ${response.status}`)
+export interface ApiResponse<T> {
+  data: T
+  meta: ApiResponseMeta
+}
+
+async function fetchWithTimeout(
+  url: string,
+  init?: RequestInit,
+): Promise<Response> {
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT_MS)
+
+  try {
+    return await fetch(url, {
+      ...init,
+      signal: controller.signal,
+      headers: {
+        Accept: 'application/json',
+        ...init?.headers,
+      },
+    })
+  } finally {
+    clearTimeout(timeoutId)
+  }
+}
+
+// fetch wrapper with caching + timeout. use via mediaService, not in components.
+export async function apiClient<T>(
+  endpoint: string,
+  init?: RequestInit,
+  config: ApiRequestConfig = {},
+): Promise<ApiResponse<T>> {
+  const url = `${API_BASE_URL}${endpoint}`
+  const cacheKey = config.cacheKey ?? endpoint
+  const cacheTtlMs = config.cacheTtlMs ?? CACHE_TTL.DEFAULT
+
+  if (!config.forceRefresh) {
+    const cached = getFromCache<T>(cacheKey)
+    if (cached !== null) {
+      return {
+        data: cached,
+        meta: { fromCache: true, isStale: false },
+      }
+    }
   }
 
-  return response.json() as Promise<T>
+  try {
+    const response = await fetchWithTimeout(url, init)
+
+    if (!response.ok) {
+      throw new ApiError(`Request failed with status ${response.status}`, {
+        status: response.status,
+        endpoint,
+      })
+    }
+
+    const data = (await response.json()) as T
+    setCache(cacheKey, data, cacheTtlMs)
+
+    return {
+      data,
+      meta: { fromCache: false, isStale: false },
+    }
+  } catch (error) {
+    // network failed - try stale cache
+    const stale = getFromCache<T>(cacheKey, { allowStale: true })
+
+    if (stale !== null) {
+      return {
+        data: stale,
+        meta: { fromCache: true, isStale: true },
+      }
+    }
+
+    throw toApiError(error, endpoint)
+  }
 }

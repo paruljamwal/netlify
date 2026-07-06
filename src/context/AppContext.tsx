@@ -1,8 +1,7 @@
 import { createContext, useContext, type ReactNode } from 'react'
 
-/** Shared UI state (theme, selected profile, watchlist) lives here */
 type AppContextValue = {
-  // define your state shape as you build features
+  // add global state here later (watchlist, profile, etc.)
 }
 
 const AppContext = createContext<AppContextValue | null>(null)
