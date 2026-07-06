@@ -1,11 +1,7 @@
+import { HomePage } from '@/pages/HomePage'
 
 function App() {
-
-  return (
-    <>
-     <div>Initial Setup</div>
-    </>
-  )
+  return <HomePage />
 }
 
 export default App
