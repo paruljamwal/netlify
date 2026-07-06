@@ -1,11 +1,6 @@
 import { MAX_HISTORY_ITEMS, PROFILE_STORAGE_KEYS } from '@/constants/profile'
-import type { HistoryEntry, UserSession } from '@/types/profile'
+import type { HistoryEntry } from '@/types/profile'
 import type { MediaItem } from '@/types/media'
-
-const DEFAULT_USER: UserSession = {
-  name: 'Parul',
-  email: 'parul@netflix-ui.dev',
-}
 
 function readJson<T>(key: string, fallback: T): T {
   try {
@@ -38,44 +33,6 @@ export function loadHistory(): HistoryEntry[] {
 
 export function saveHistory(entries: HistoryEntry[]): void {
   writeJson(PROFILE_STORAGE_KEYS.HISTORY, entries)
-}
-
-export function loadSession(): UserSession | null {
-  return readJson<UserSession | null>(PROFILE_STORAGE_KEYS.SESSION, null)
-}
-
-export function saveSession(user: UserSession): void {
-  clearSignedOutFlag()
-  writeJson(PROFILE_STORAGE_KEYS.SESSION, user)
-}
-
-export function clearSession(): void {
-  try {
-    localStorage.removeItem(PROFILE_STORAGE_KEYS.SESSION)
-    localStorage.setItem(PROFILE_STORAGE_KEYS.SIGNED_OUT, '1')
-  } catch {
-    // ignore
-  }
-}
-
-export function isSignedOut(): boolean {
-  try {
-    return localStorage.getItem(PROFILE_STORAGE_KEYS.SIGNED_OUT) === '1'
-  } catch {
-    return false
-  }
-}
-
-export function clearSignedOutFlag(): void {
-  try {
-    localStorage.removeItem(PROFILE_STORAGE_KEYS.SIGNED_OUT)
-  } catch {
-    // ignore
-  }
-}
-
-export function getDefaultUser(): UserSession {
-  return DEFAULT_USER
 }
 
 export function trimHistory(entries: HistoryEntry[]): HistoryEntry[] {

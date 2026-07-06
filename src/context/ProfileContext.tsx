@@ -7,20 +7,14 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { ROUTES } from '@/constants/routes'
+import { toUserSession } from '@/lib/firebase'
+import { useAuth } from '@/context/AuthContext'
 import type { HistoryEntry, UserSession } from '@/types/profile'
 import type { MediaItem } from '@/types/media'
 import {
-  clearSession,
-  clearSignedOutFlag,
-  getDefaultUser,
-  isSignedOut,
   loadHistory,
-  loadSession,
   loadWatchlist,
   saveHistory,
-  saveSession,
   saveWatchlist,
   trimHistory,
 } from '@/utils/profileStorage'
@@ -34,30 +28,19 @@ interface ProfileContextValue {
   removeFromWatchlist: (id: string) => void
   toggleWatchlist: (show: MediaItem) => void
   recordWatch: (show: MediaItem) => void
-  signIn: () => void
-  signOut: () => void
 }
 
 const ProfileContext = createContext<ProfileContextValue | null>(null)
 
 export function ProfileProvider({ children }: { children: ReactNode }) {
-  const navigate = useNavigate()
-  const [user, setUser] = useState<UserSession | null>(() => loadSession())
+  const { user: authUser } = useAuth()
   const [watchlist, setWatchlist] = useState<MediaItem[]>(() => loadWatchlist())
   const [history, setHistory] = useState<HistoryEntry[]>(() => loadHistory())
 
-  useEffect(() => {
-    const session = loadSession()
-    if (session) {
-      setUser(session)
-      return
-    }
-    if (!isSignedOut()) {
-      const defaultUser = getDefaultUser()
-      setUser(defaultUser)
-      saveSession(defaultUser)
-    }
-  }, [])
+  const user = useMemo(
+    () => (authUser ? toUserSession(authUser) : null),
+    [authUser],
+  )
 
   useEffect(() => {
     saveWatchlist(watchlist)
@@ -100,19 +83,6 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
-  const signIn = useCallback(() => {
-    clearSignedOutFlag()
-    const defaultUser = getDefaultUser()
-    setUser(defaultUser)
-    saveSession(defaultUser)
-  }, [])
-
-  const signOut = useCallback(() => {
-    clearSession()
-    setUser(null)
-    navigate(ROUTES.HOME)
-  }, [navigate])
-
   const value = useMemo(
     () => ({
       user,
@@ -123,8 +93,6 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
       removeFromWatchlist,
       toggleWatchlist,
       recordWatch,
-      signIn,
-      signOut,
     }),
     [
       user,
@@ -135,8 +103,6 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
       removeFromWatchlist,
       toggleWatchlist,
       recordWatch,
-      signIn,
-      signOut,
     ],
   )
 
