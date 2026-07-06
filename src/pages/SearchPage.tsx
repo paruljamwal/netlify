@@ -5,6 +5,7 @@ import { SearchBar } from '@/components/search/SearchBar'
 import { SearchEmptyState } from '@/components/search/SearchEmptyState'
 import { SearchResults } from '@/components/search/SearchResults'
 import { useMediaSearch } from '@/hooks/useMediaSearch'
+import { useProfile } from '@/context/ProfileContext'
 import type { MediaItem } from '@/types/media'
 
 export function SearchPage() {
@@ -13,6 +14,7 @@ export function SearchPage() {
 
   const { results, loading, error, mode, debouncedQuery, hasSearched } =
     useMediaSearch({ query })
+  const { recordWatch, toggleWatchlist, isInWatchlist } = useProfile()
 
   useEffect(() => {
     const param = searchParams.get('q') ?? ''
@@ -76,7 +78,14 @@ export function SearchPage() {
 
         <div className="mt-8">
           {showResults ? (
-            <SearchResults results={results} loading={loading} mode={mode} />
+            <SearchResults
+              results={results}
+              loading={loading}
+              mode={mode}
+              onShowClick={recordWatch}
+              isInWatchlist={isInWatchlist}
+              onToggleWatchlist={toggleWatchlist}
+            />
           ) : (
             <SearchEmptyState
               mode={mode}

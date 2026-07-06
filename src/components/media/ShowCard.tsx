@@ -7,6 +7,8 @@ interface ShowCardProps {
   show: MediaItem
   variant?: ShowCardVariant
   onClick?: (show: MediaItem) => void
+  inWatchlist?: boolean
+  onToggleWatchlist?: (show: MediaItem) => void
 }
 
 const PLACEHOLDER =
@@ -29,6 +31,8 @@ function ShowCardComponent({
   show,
   variant = 'landscape',
   onClick,
+  inWatchlist = false,
+  onToggleWatchlist,
 }: ShowCardProps) {
   return (
     <article
@@ -46,6 +50,23 @@ function ShowCardComponent({
       <div
         className={`relative overflow-hidden rounded bg-[#181818] ${variantAspect[variant]}`}
       >
+        {onToggleWatchlist && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              onToggleWatchlist(show)
+            }}
+            className={`absolute right-2 top-2 z-10 rounded-full px-2 py-1 text-xs font-bold transition ${
+              inWatchlist
+                ? 'bg-[#e50914] text-white'
+                : 'bg-black/60 text-white hover:bg-black/80'
+            }`}
+            aria-label={inWatchlist ? 'Remove from My List' : 'Add to My List'}
+          >
+            {inWatchlist ? '✓' : '+'}
+          </button>
+        )}
         <img
           src={show.imageUrl ?? PLACEHOLDER}
           alt={show.title}
@@ -73,6 +94,8 @@ export const ShowCard = memo(ShowCardComponent, (prev, next) => {
   return (
     prev.show.id === next.show.id &&
     prev.variant === next.variant &&
-    prev.onClick === next.onClick
+    prev.onClick === next.onClick &&
+    prev.inWatchlist === next.inWatchlist &&
+    prev.onToggleWatchlist === next.onToggleWatchlist
   )
 })

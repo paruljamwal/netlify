@@ -14,3 +14,4 @@ export {
   YEAR_SEARCH_MAX_PAGES,
   MIN_NAME_SEARCH_LENGTH,
 } from './search'
+export { PROFILE_STORAGE_KEYS, MAX_HISTORY_ITEMS } from './profile'

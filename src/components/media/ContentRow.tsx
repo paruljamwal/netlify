@@ -10,6 +10,8 @@ interface ContentRowProps {
   loading?: boolean
   skeletonCount?: number
   onShowClick?: (show: MediaItem) => void
+  isInWatchlist?: (id: string) => boolean
+  onToggleWatchlist?: (show: MediaItem) => void
 }
 
 function ContentRowComponent({
@@ -19,6 +21,8 @@ function ContentRowComponent({
   loading = false,
   skeletonCount = 8,
   onShowClick,
+  isInWatchlist,
+  onToggleWatchlist,
 }: ContentRowProps) {
   return (
     <section
@@ -37,6 +41,8 @@ function ContentRowComponent({
                 show={show}
                 variant={variant}
                 onClick={onShowClick}
+                inWatchlist={isInWatchlist?.(show.id)}
+                onToggleWatchlist={onToggleWatchlist}
               />
             ))}
       </div>

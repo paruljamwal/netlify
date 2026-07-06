@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { Navbar } from '@/components/layout/Navbar'
 import { ContentRow } from '@/components/media/ContentRow'
 import { HeroBanner } from '@/components/media/HeroBanner'
+import { useProfile } from '@/context/ProfileContext'
 import { useTrendingShows } from '@/hooks'
 import type { MediaItem } from '@/types/media'
 
@@ -24,6 +25,9 @@ function splitRows(shows: MediaItem[], topId: string | undefined) {
 
 export function HomePage() {
   const { data, loading, error, isStale, refetch } = useTrendingShows(0)
+  const { recordWatch, toggleWatchlist, isInWatchlist } = useProfile()
+
+  const handleShowClick = (show: MediaItem) => recordWatch(show)
 
   const topShow = useMemo(() => (data ? pickTopShow(data) : null), [data])
   const rows = useMemo(
@@ -65,18 +69,27 @@ export function HomePage() {
             shows={rows.trending}
             variant="landscape"
             loading={loading}
+            onShowClick={handleShowClick}
+            isInWatchlist={isInWatchlist}
+            onToggleWatchlist={toggleWatchlist}
           />
           <ContentRow
             title="Popular on Netflix"
             shows={rows.popular}
             variant="portrait"
             loading={loading}
+            onShowClick={handleShowClick}
+            isInWatchlist={isInWatchlist}
+            onToggleWatchlist={toggleWatchlist}
           />
           <ContentRow
             title="TV Classics"
             shows={rows.classics}
             variant="landscape"
             loading={loading}
+            onShowClick={handleShowClick}
+            isInWatchlist={isInWatchlist}
+            onToggleWatchlist={toggleWatchlist}
           />
         </div>
       </main>

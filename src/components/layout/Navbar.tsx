@@ -45,13 +45,13 @@ export function Navbar() {
           >
             ⌕
           </Link>
-          <button
-            type="button"
+          <Link
+            to={ROUTES.PROFILE}
             className="flex h-8 w-8 items-center justify-center rounded bg-[#e50914] text-sm font-bold text-white transition hover:scale-105"
             aria-label="Profile"
           >
             P
-          </button>
+          </Link>
         </div>
       </div>
     </header>
