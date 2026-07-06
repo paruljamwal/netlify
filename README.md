@@ -10,49 +10,94 @@ A Netflix-style browsing app built for the Binaire frontend assessment. Browse t
 
 ### Auth
 
-| Sign in | Sign up |
-|:---:|:---:|
-| ![Sign in](./docs/screenshots/login.png) | ![Sign up](./docs/screenshots/signup.png) |
+<p align="center">
+  <img src="docs/screenshots/login.png" alt="Sign in" width="700" />
+  <br /><sub>Sign in</sub>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/signup.png" alt="Sign up" width="700" />
+  <br /><sub>Sign up</sub>
+</p>
 
 ### Home & browse
 
-| Hero | Content rows |
-|:---:|:---:|
-| ![Home hero](./docs/screenshots/home.png) | ![Content rows](./docs/screenshots/content-rows.png) |
+<p align="center">
+  <img src="docs/screenshots/home.png" alt="Home hero" width="700" />
+  <br /><sub>Hero</sub>
+</p>
 
-| TV Shows | Add to list |
-|:---:|:---:|
-| ![TV Shows](./docs/screenshots/browse.png) | ![Watchlist tooltip](./docs/screenshots/watchlist-tooltip.png) |
+<p align="center">
+  <img src="docs/screenshots/content-rows.png" alt="Content rows" width="700" />
+  <br /><sub>Content rows</sub>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/browse.png" alt="TV Shows" width="700" />
+  <br /><sub>TV Shows</sub>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/watchlist-tooltip.png" alt="Watchlist tooltip" width="700" />
+  <br /><sub>Add to list</sub>
+</p>
 
 ### Title details
 
-| Details modal | In My List |
-|:---:|:---:|
-| ![Details modal](./docs/screenshots/detail-modal.png) | ![In My List](./docs/screenshots/my-list-button.png) |
+<p align="center">
+  <img src="docs/screenshots/detail-modal.png" alt="Details modal" width="700" />
+  <br /><sub>Details modal</sub>
+</p>
 
-| From profile |
-|:---:|
-| ![Profile modal](./docs/screenshots/profile-modal.png) |
+<p align="center">
+  <img src="docs/screenshots/my-list-button.png" alt="In My List" width="700" />
+  <br /><sub>In My List</sub>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/profile-modal.png" alt="Profile modal" width="700" />
+  <br /><sub>From profile</sub>
+</p>
 
 ### Search
 
-| Empty state | ID lookup |
-|:---:|:---:|
-| ![Search](./docs/screenshots/search.png) | ![Search by ID](./docs/screenshots/search-id.png) |
+<p align="center">
+  <img src="docs/screenshots/search.png" alt="Search" width="700" />
+  <br /><sub>Empty state</sub>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/search-id.png" alt="Search by ID" width="700" />
+  <br /><sub>ID lookup</sub>
+</p>
 
 ### Profile & offline
 
-| My List | Sign out |
-|:---:|:---:|
-| ![Profile](./docs/screenshots/profile.png) | ![Sign out](./docs/screenshots/sign-out.png) |
+<p align="center">
+  <img src="docs/screenshots/profile.png" alt="Profile" width="700" />
+  <br /><sub>My List</sub>
+</p>
 
-| Offline | Back online |
-|:---:|:---:|
-| ![Offline mode](./docs/screenshots/offline-mode.png) | ![Back online](./docs/screenshots/back-online.png) |
+<p align="center">
+  <img src="docs/screenshots/sign-out.png" alt="Sign out" width="700" />
+  <br /><sub>Sign out</sub>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/offline-mode.png" alt="Offline mode" width="700" />
+  <br /><sub>Offline</sub>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/back-online.png" alt="Back online" width="700" />
+  <br /><sub>Back online</sub>
+</p>
 
 ### Footer
 
-![Footer](./docs/screenshots/footer.png)
+<p align="center">
+  <img src="docs/screenshots/footer.png" alt="Footer" width="700" />
+</p>
 
 ---
 
