@@ -2,11 +2,11 @@ import type { MediaItem } from '@/types/media'
 
 export type SearchMode = 'id' | 'name' | 'year' | 'idle'
 
-// id = digits, year = 4 digits, everything else = name
 export function detectSearchMode(query: string): SearchMode {
   const trimmed = query.trim()
   if (!trimmed) return 'idle'
   if (/^(19|20)\d{2}$/.test(trimmed)) return 'year'
+  if (/^tt\d+$/i.test(trimmed)) return 'id'
   if (/^\d+$/.test(trimmed)) return 'id'
   return 'name'
 }

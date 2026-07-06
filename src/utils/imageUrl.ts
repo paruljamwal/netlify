@@ -1,4 +1,4 @@
-/** Prefer TVMaze original (~680px) over medium (~210px) to avoid upscaling blur. */
+/** Use the highest-resolution image URL available from the provider. */
 export function getShowImageUrl(
   image: { medium?: string; original?: string } | null | undefined,
 ): string | null {

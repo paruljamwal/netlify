@@ -1,12 +1,32 @@
 export const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ?? 'https://api.tvmaze.com'
+  import.meta.env.VITE_API_BASE_URL ?? 'https://api.imdbapi.dev'
 
 export const API_TIMEOUT_MS = 10_000
 
+export const IMDB_DEFAULT_PAGE_SIZE = 50
+
+export interface TitlesQueryParams {
+  pageSize?: number
+  pageToken?: string
+  startYear?: number
+  endYear?: number
+}
+
+function buildTitlesQuery(params: TitlesQueryParams = {}): string {
+  const search = new URLSearchParams()
+  search.set('pageSize', String(params.pageSize ?? IMDB_DEFAULT_PAGE_SIZE))
+  if (params.pageToken) search.set('pageToken', params.pageToken)
+  if (params.startYear != null) search.set('startYear', String(params.startYear))
+  if (params.endYear != null) search.set('endYear', String(params.endYear))
+  return search.toString()
+}
+
 export const ENDPOINTS = {
-  SHOWS: (page = 0) => `/shows?page=${page}`,
-  SHOW_DETAIL: (id: string | number) => `/shows/${id}`,
-  SEARCH_SHOWS: (query: string) =>
-    `/search/shows?q=${encodeURIComponent(query)}`,
-  SHOW_EPISODES: (id: string | number) => `/shows/${id}/episodes`,
+  TITLES: (params: TitlesQueryParams = {}) => `/titles?${buildTitlesQuery(params)}`,
+  TITLE_DETAIL: (id: string) => `/titles/${encodeURIComponent(id)}`,
+  SEARCH_TITLES: (query: string, pageSize = 25) =>
+    `/search/titles?${new URLSearchParams({
+      query,
+      pageSize: String(pageSize),
+    })}`,
 } as const

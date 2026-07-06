@@ -25,7 +25,7 @@ function splitRows(shows: MediaItem[], topId: string | undefined) {
 }
 
 export function HomePage() {
-  const { data, loading, error, isStale, refetch } = useTrendingShows(0)
+  const { data, loading, error, isStale, refetch } = useTrendingShows()
   const { handleShowClick, toggleWatchlist, isInWatchlist } = useShowActions()
 
   const topShow = useMemo(() => (data ? pickTopShow(data) : null), [data])

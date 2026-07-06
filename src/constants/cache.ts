@@ -1,7 +1,10 @@
 export const CACHE_KEYS = {
-  SHOWS_PAGE: (page: number) => `shows:page:${page}`,
-  SHOW_DETAIL: (id: string) => `show:detail:${id}`,
+  SHOWS_PAGE: (pageToken?: string) =>
+    `titles:${pageToken ?? 'start'}`,
+  SHOW_DETAIL: (id: string) => `title:detail:${id}`,
   SEARCH: (query: string) => `search:${query.toLowerCase().trim()}`,
+  YEAR: (year: string, pageToken?: string) =>
+    `year:${year}:${pageToken ?? 'start'}`,
 } as const
 
 export const CACHE_TTL = {
@@ -11,4 +14,4 @@ export const CACHE_TTL = {
   DEFAULT: 15 * 60 * 1000,
 } as const
 
-export const CACHE_STORAGE_KEY = 'netflix-ui-api-cache'
+export const CACHE_STORAGE_KEY = 'binaire-api-cache'

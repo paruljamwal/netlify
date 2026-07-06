@@ -31,14 +31,14 @@ export function Footer() {
           ))}
         </nav>
         <p className="mt-8 text-xs text-subtle">
-          Demo app · TV data from{' '}
+          Demo app · Data from{' '}
           <a
-            href="https://www.tvmaze.com/api"
+            href="https://imdbapi.dev/"
             target="_blank"
             rel="noreferrer"
             className="underline hover:text-muted"
           >
-            TVMaze
+            IMDbAPI
           </a>
         </p>
       </div>

@@ -1,32 +1,39 @@
-import type { MediaItem, MediaSearchResult } from '@/types/media'
-import type { TvMazeSearchResult, TvMazeShow } from '@/types/tvmaze'
-import { getShowImageUrl } from '@/utils/imageUrl'
+import type { MediaItem, MediaSearchResult, MediaType } from '@/types/media'
+import type { ImdbTitle } from '@/types/imdbapi'
 
-function stripHtml(html: string | null): string | null {
-  if (!html) return null
-  return html.replace(/<[^>]*>/g, '').trim()
+function mapTitleType(type: string): MediaType {
+  if (type === 'movie' || type === 'tvMovie' || type === 'short') return 'movie'
+  return 'tv'
 }
 
-export function mapShowToMediaItem(show: TvMazeShow): MediaItem {
+function inferStatus(title: ImdbTitle): string | null {
+  if (title.endYear) return 'Ended'
+  if (title.startYear) return 'Released'
+  return null
+}
+
+export function mapImdbTitleToMediaItem(title: ImdbTitle): MediaItem {
   return {
-    id: String(show.id),
-    title: show.name,
-    type: 'tv',
-    imageUrl: getShowImageUrl(show.image),
-    summary: stripHtml(show.summary),
-    rating: show.rating?.average ?? null,
-    genres: show.genres ?? [],
-    premiered: show.premiered,
-    runtime: show.runtime ?? show.averageRuntime ?? null,
-    status: show.status ?? null,
+    id: title.id,
+    title: title.primaryTitle,
+    type: mapTitleType(title.type),
+    imageUrl: title.primaryImage?.url ?? null,
+    summary: title.plot ?? null,
+    rating: title.rating?.aggregateRating ?? null,
+    genres: title.genres ?? [],
+    premiered: title.startYear ? String(title.startYear) : null,
+    runtime: title.runtimeSeconds
+      ? Math.round(title.runtimeSeconds / 60)
+      : null,
+    status: inferStatus(title),
   }
 }
 
-export function mapSearchResults(
-  results: TvMazeSearchResult[],
+export function mapImdbTitlesToSearchResults(
+  titles: ImdbTitle[],
 ): MediaSearchResult[] {
-  return results.map(({ score, show }) => ({
-    score,
-    item: mapShowToMediaItem(show),
+  return titles.map((title, index) => ({
+    score: titles.length - index,
+    item: mapImdbTitleToMediaItem(title),
   }))
 }

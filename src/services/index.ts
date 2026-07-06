@@ -1,7 +1,7 @@
 export { apiClient } from './apiClient'
 export type { ApiResponse, ApiResponseMeta } from './apiClient'
 export { ApiError, toApiError } from './apiError'
-export { mapShowToMediaItem, mapSearchResults } from './mediaMappers'
+export { mapImdbTitleToMediaItem, mapImdbTitlesToSearchResults } from './mediaMappers'
 export { mediaService } from './mediaService'
 export { isBrowserOnline, subscribeToNetwork } from './networkService'
 export { onReconnect, notifyReconnect, warmOfflineCache } from './offlineService'

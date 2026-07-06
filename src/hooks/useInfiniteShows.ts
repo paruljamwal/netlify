@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { MAX_BROWSE_SHOWS, TVMAZE_PAGE_SIZE } from '@/constants/browse'
+import { IMDB_PAGE_SIZE, MAX_BROWSE_SHOWS } from '@/constants/browse'
 import { mediaService } from '@/services'
 import { ApiError, toApiError } from '@/services/apiError'
 import { onReconnect } from '@/services/offlineService'
@@ -22,7 +22,8 @@ export function useInfiniteShows(
   const [hasMore, setHasMore] = useState(true)
   const [error, setError] = useState<ApiError | null>(null)
 
-  const pageRef = useRef(0)
+  const nextTokenRef = useRef<string | undefined>(undefined)
+  const loadedTokensRef = useRef<(string | undefined)[]>([])
   const loadingRef = useRef(false)
   const hasMoreRef = useRef(true)
   const mountedRef = useRef(true)
@@ -37,19 +38,21 @@ export function useInfiniteShows(
       setError(null)
     }
 
-    abortRef.current?.abort() // fast scroll
+    abortRef.current?.abort()
     const controller = new AbortController()
     abortRef.current = controller
 
-    const page = pageRef.current
+    const pageToken = nextTokenRef.current
 
     try {
-      const { items } = await mediaService.browseShows({
-        page,
+      const { items, nextPageToken } = await mediaService.browseShows({
+        pageToken,
         signal: controller.signal,
       })
 
       if (!mountedRef.current) return
+
+      loadedTokensRef.current.push(pageToken)
 
       if (items.length === 0) {
         hasMoreRef.current = false
@@ -68,15 +71,15 @@ export function useInfiniteShows(
         return merged
       })
 
-      pageRef.current = page + 1
+      nextTokenRef.current = nextPageToken
 
-      if (items.length < TVMAZE_PAGE_SIZE) {
+      if (!nextPageToken || items.length < IMDB_PAGE_SIZE) {
         hasMoreRef.current = false
         setHasMore(false)
       }
     } catch (err) {
       if (!mountedRef.current || controller.signal.aborted) return
-      setError(toApiError(err, `shows?page=${page}`))
+      setError(toApiError(err, ENDPOINT_LABEL(pageToken)))
     } finally {
       loadingRef.current = false
       if (mountedRef.current) setLoading(false)
@@ -95,14 +98,14 @@ export function useInfiniteShows(
 
   useEffect(() => {
     return onReconnect(async () => {
-      const pagesLoaded = pageRef.current
-      if (pagesLoaded === 0) return
+      const tokens = loadedTokensRef.current
+      if (tokens.length === 0) return
 
       try {
         let merged: MediaItem[] = []
-        for (let p = 0; p < pagesLoaded; p++) {
+        for (const token of tokens) {
           const { items } = await mediaService.browseShows({
-            page: p,
+            pageToken: token,
             forceRefresh: true,
           })
           merged = mergeUniqueShows(merged, items)
@@ -118,4 +121,8 @@ export function useInfiniteShows(
   }, [maxItems])
 
   return { shows, loading, hasMore, error, loadMore }
+}
+
+function ENDPOINT_LABEL(pageToken?: string) {
+  return pageToken ? `titles?pageToken=${pageToken.slice(0, 12)}…` : 'titles'
 }

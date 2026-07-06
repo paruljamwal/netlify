@@ -18,7 +18,7 @@ export async function warmOfflineCache(): Promise<void> {
   if (!navigator.onLine) return
 
   try {
-    await mediaService.browseShows({ page: 0, forceRefresh: true })
+    await mediaService.browseShows({ forceRefresh: true })
   } catch {
     // best effort
   }

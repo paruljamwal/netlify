@@ -3,23 +3,23 @@ import type { MediaItem } from '@/types/media'
 import { useApi } from './useApi'
 
 interface UseBrowseShowsOptions {
-  page?: number
+  pageToken?: string
   enabled?: boolean
 }
 
 export function useBrowseShows(options: UseBrowseShowsOptions = {}) {
-  const { page = 0, enabled = true } = options
+  const { pageToken, enabled = true } = options
 
   return useApi<MediaItem[]>(
     async () => {
-      const { items, meta } = await mediaService.browseShows({ page })
+      const { items, meta } = await mediaService.browseShows({ pageToken })
       return { data: items, fromCache: meta.fromCache, isStale: meta.isStale }
     },
-    [page],
+    [pageToken],
     { enabled },
   )
 }
 
-export function useTrendingShows(page = 0) {
-  return useBrowseShows({ page })
+export function useTrendingShows(pageToken?: string) {
+  return useBrowseShows({ pageToken })
 }

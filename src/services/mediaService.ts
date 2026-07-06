@@ -5,7 +5,7 @@ import {
 } from '@/constants/search'
 import { CACHE_KEYS, CACHE_TTL, ENDPOINTS } from '@/constants'
 import type { MediaItem, MediaSearchResult } from '@/types/media'
-import type { TvMazeSearchResult, TvMazeShow } from '@/types/tvmaze'
+import type { ImdbListTitlesResponse, ImdbTitle } from '@/types/imdbapi'
 import {
   detectSearchMode,
   filterShowsByYear,
@@ -13,10 +13,13 @@ import {
 } from '@/utils/search'
 import { apiClient } from './apiClient'
 import { ApiError } from './apiError'
-import { mapSearchResults, mapShowToMediaItem } from './mediaMappers'
+import {
+  mapImdbTitleToMediaItem,
+  mapImdbTitlesToSearchResults,
+} from './mediaMappers'
 
 export interface BrowseShowsOptions {
-  page?: number
+  pageToken?: string
   forceRefresh?: boolean
   signal?: AbortSignal
 }
@@ -39,20 +42,38 @@ export interface UnifiedSearchOptions {
   forceRefresh?: boolean
 }
 
+export interface BrowseShowsResult {
+  items: MediaItem[]
+  nextPageToken?: string
+  meta: { fromCache: boolean; isStale: boolean }
+}
+
+function normalizeImdbId(id: string): string {
+  const trimmed = id.trim()
+  if (/^tt\d+$/i.test(trimmed)) return trimmed.toLowerCase()
+  if (/^\d+$/.test(trimmed)) return `tt${trimmed.padStart(7, '0')}`
+  return trimmed
+}
+
 export const mediaService = {
-  async browseShows({ page = 0, forceRefresh = false, signal }: BrowseShowsOptions = {}) {
-    const { data, meta } = await apiClient<TvMazeShow[]>(
-      ENDPOINTS.SHOWS(page),
+  async browseShows({
+    pageToken,
+    forceRefresh = false,
+    signal,
+  }: BrowseShowsOptions = {}): Promise<BrowseShowsResult> {
+    const { data, meta } = await apiClient<ImdbListTitlesResponse>(
+      ENDPOINTS.TITLES({ pageToken }),
       { signal },
       {
-        cacheKey: CACHE_KEYS.SHOWS_PAGE(page),
+        cacheKey: CACHE_KEYS.SHOWS_PAGE(pageToken),
         cacheTtlMs: CACHE_TTL.LIST,
         forceRefresh,
       },
     )
 
     return {
-      items: data.map(mapShowToMediaItem),
+      items: (data.titles ?? []).map(mapImdbTitleToMediaItem),
+      nextPageToken: data.nextPageToken,
       meta,
     }
   },
@@ -63,8 +84,8 @@ export const mediaService = {
       return { results: [] as MediaSearchResult[], meta: { fromCache: false, isStale: false } }
     }
 
-    const { data, meta } = await apiClient<TvMazeSearchResult[]>(
-      ENDPOINTS.SEARCH_SHOWS(trimmed),
+    const { data, meta } = await apiClient<ImdbListTitlesResponse>(
+      ENDPOINTS.SEARCH_TITLES(trimmed),
       { signal },
       {
         cacheKey: CACHE_KEYS.SEARCH(trimmed),
@@ -74,35 +95,41 @@ export const mediaService = {
     )
 
     return {
-      results: mapSearchResults(data),
+      results: mapImdbTitlesToSearchResults(data.titles ?? []),
       meta,
     }
   },
 
   async getShowDetail({ id, forceRefresh = false, signal }: ShowDetailOptions) {
-    const { data, meta } = await apiClient<TvMazeShow>(
-      ENDPOINTS.SHOW_DETAIL(id),
+    const normalizedId = normalizeImdbId(id)
+    const { data, meta } = await apiClient<ImdbTitle>(
+      ENDPOINTS.TITLE_DETAIL(normalizedId),
       { signal },
       {
-        cacheKey: CACHE_KEYS.SHOW_DETAIL(id),
+        cacheKey: CACHE_KEYS.SHOW_DETAIL(normalizedId),
         cacheTtlMs: CACHE_TTL.DETAIL,
         forceRefresh,
       },
     )
 
     return {
-      item: mapShowToMediaItem(data) as MediaItem,
+      item: mapImdbTitleToMediaItem(data),
       meta,
     }
   },
 
   async searchById(id: string, signal?: AbortSignal, forceRefresh = false): Promise<MediaItem[]> {
     try {
-      const { item } = await this.getShowDetail({ id, signal, forceRefresh })
+      const { item } = await this.getShowDetail({
+        id: normalizeImdbId(id),
+        signal,
+        forceRefresh,
+      })
       return [item]
     } catch (error) {
-      // bad id, just return empty
-      if (error instanceof ApiError && error.status === 404) return []
+      if (error instanceof ApiError && (error.status === 404 || error.status === 400)) {
+        return []
+      }
       throw error
     }
   },
@@ -112,13 +139,26 @@ export const mediaService = {
     signal?: AbortSignal,
     forceRefresh = false,
   ): Promise<MediaItem[]> {
+    const yearNum = Number.parseInt(year, 10)
     const matches: MediaItem[] = []
+    let pageToken: string | undefined
 
-    // no year filter on tvmaze, walk browse pages
     for (let page = 0; page < YEAR_SEARCH_MAX_PAGES; page++) {
-      const { items } = await this.browseShows({ page, signal, forceRefresh })
+      const { data } = await apiClient<ImdbListTitlesResponse>(
+        ENDPOINTS.TITLES({ startYear: yearNum, endYear: yearNum, pageToken }),
+        { signal },
+        {
+          cacheKey: CACHE_KEYS.YEAR(year, pageToken),
+          cacheTtlMs: CACHE_TTL.SEARCH,
+          forceRefresh,
+        },
+      )
+
+      const items = (data.titles ?? []).map(mapImdbTitleToMediaItem)
       matches.push(...filterShowsByYear(items, year))
-      if (items.length === 0) break
+
+      if (!data.nextPageToken || items.length === 0) break
+      pageToken = data.nextPageToken
     }
 
     return matches

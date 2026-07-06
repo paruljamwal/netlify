@@ -10,7 +10,7 @@ import type { MediaItem } from '@/types/media'
 
 const hints = [
   { label: 'By name', example: 'Breaking Bad' },
-  { label: 'By ID', example: '169' },
+  { label: 'By ID', example: 'tt0903747' },
   { label: 'By year', example: '2011' },
 ]
 
@@ -67,7 +67,7 @@ export function SearchPage() {
           </p>
           <h1 className="mt-2 text-3xl font-bold">Search</h1>
           <p className="mt-2 text-sm text-muted">
-            Look up shows by title, TVMaze ID, or premiere year.
+            Look up titles by name, IMDb ID, or release year.
           </p>
         </header>
 
