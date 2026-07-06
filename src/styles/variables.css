@@ -1,0 +1,16 @@
+:root {
+  /* Netflix-style palette — tweak as needed */
+  --color-bg: #141414;
+  --color-surface: #181818;
+  --color-text: #ffffff;
+  --color-text-muted: #b3b3b3;
+  --color-accent: #e50914;
+
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 2rem;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+}
