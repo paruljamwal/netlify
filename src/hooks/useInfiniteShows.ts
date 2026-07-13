@@ -12,13 +12,14 @@ interface UseInfiniteShowsResult {
   hasMore: boolean
   error: ApiError | null
   loadMore: () => Promise<void>
+  retry: () => Promise<void>
 }
 
 export function useInfiniteShows(
   maxItems = MAX_BROWSE_SHOWS,
 ): UseInfiniteShowsResult {
   const [shows, setShows] = useState<MediaItem[]>([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [hasMore, setHasMore] = useState(true)
   const [error, setError] = useState<ApiError | null>(null)
 
@@ -26,11 +27,15 @@ export function useInfiniteShows(
   const loadedTokensRef = useRef<(string | undefined)[]>([])
   const loadingRef = useRef(false)
   const hasMoreRef = useRef(true)
+  const errorRef = useRef(false)
   const mountedRef = useRef(true)
   const abortRef = useRef<AbortController | null>(null)
 
   const loadMore = useCallback(async () => {
-    if (loadingRef.current || !hasMoreRef.current) return
+    // Bail while in-flight, exhausted, or after an error (manual retry clears it).
+    // Leaving hasMore true on failure used to let the scroll sentinel re-fire
+    // forever and blink empty ↔ skeleton when the API is down.
+    if (loadingRef.current || !hasMoreRef.current || errorRef.current) return
 
     loadingRef.current = true
     if (mountedRef.current) {
@@ -79,12 +84,19 @@ export function useInfiniteShows(
       }
     } catch (err) {
       if (!mountedRef.current || controller.signal.aborted) return
+      errorRef.current = true
       setError(toApiError(err, ENDPOINT_LABEL(pageToken)))
     } finally {
       loadingRef.current = false
       if (mountedRef.current) setLoading(false)
     }
   }, [maxItems])
+
+  const retry = useCallback(async () => {
+    errorRef.current = false
+    if (mountedRef.current) setError(null)
+    await loadMore()
+  }, [loadMore])
 
   useEffect(() => {
     mountedRef.current = true
@@ -99,7 +111,13 @@ export function useInfiniteShows(
   useEffect(() => {
     return onReconnect(async () => {
       const tokens = loadedTokensRef.current
-      if (tokens.length === 0) return
+      if (tokens.length === 0) {
+        // First page never succeeded — clear the error latch and try again.
+        errorRef.current = false
+        if (mountedRef.current) setError(null)
+        void loadMore()
+        return
+      }
 
       try {
         let merged: MediaItem[] = []
@@ -112,15 +130,16 @@ export function useInfiniteShows(
         }
         if (mountedRef.current) {
           setShows(merged.slice(0, maxItems))
+          errorRef.current = false
           setError(null)
         }
       } catch {
         // keep cached list on failed refresh
       }
     })
-  }, [maxItems])
+  }, [maxItems, loadMore])
 
-  return { shows, loading, hasMore, error, loadMore }
+  return { shows, loading, hasMore, error, loadMore, retry }
 }
 
 function ENDPOINT_LABEL(pageToken?: string) {
